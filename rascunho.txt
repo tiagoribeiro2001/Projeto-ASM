@@ -1,0 +1,26 @@
+Agentes:
+-> Avião
+-> Torre de Controlo
+-> Gestor de Gares
+-> Display dos Voos
+
+Comportamentos:
+------------------------------------------
+1) - Aterrar (Torre de Controlo e Avião)
+2) - Verificar gare (Torre de Controlo e Gestor de Gares)
+3) (Em caso afirmativo fazer) - Verificar alguma pista livre
+4) (Em caso afirmativo fazer) - Informar o avião que pode aterrar
+4) (Em caso negativo fazer) - Informar o avião para aguardar
+------------------------------------------
+- Descolar (Torre de Controlo e Avião)
+------------------------------------------
+- Relacionar de algum modo o Display de Voos com a Torre de controlo para manter as informações sempre atualizadas
+
+
+
+
+Estrutura de dados:
+Avião (id do avião, companhia, avião de transporte de mercadorias ou comercial, origem, destino)
+Pista (coordenada X e Y) -> Associado à torre de Controlo 
+Gare (coordenada X e Y, tipo de avião, disponibilidade) -> Associado ao Gestor de Gares
+Voos (identificador do voo, companhia, origem e destino,a descolar ou aterrar) -> Associado ao Display dos Voos

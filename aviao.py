@@ -1,0 +1,1 @@
+from spade import agent
