@@ -23,4 +23,11 @@ Estrutura de dados:
 Avião (id do avião, companhia, avião de transporte de mercadorias ou comercial, origem, destino)
 Pista (coordenada X e Y) -> Associado à torre de Controlo 
 Gare (coordenada X e Y, tipo de avião, disponibilidade) -> Associado ao Gestor de Gares
-Voos (identificador do voo, companhia, origem e destino,a descolar ou aterrar) -> Associado ao Display dos Voos
+
+
+Pontos a fazer:
+-> Definir uma lista de espera com um tamanho (Ver o passo seguinte)
+-> Ajustar o nº de aviões em espera tendo em conta o número de gares disponiveis
+-> Inicializar com 2 aviões a levantar e 2 aviões a aterrar.
+-> A Torre de controlo diz ao avião qual a pista e a gare a utilizar de modo a que a distância entre a pista e gare seja a mais pequena
+-> 
