@@ -21,8 +21,8 @@ Comportamentos:
 
 Estrutura de dados:
 Avião (id do avião, companhia, avião de transporte de mercadorias ou comercial, origem, destino)
-Pista (coordenada X e Y) -> Associado à torre de Controlo 
-Gare (coordenada X e Y, tipo de avião, disponibilidade) -> Associado ao Gestor de Gares
+Pista (coordenada X e, isFree, disponibilidade, type) -> Associado à torre de Controlo 
+Gare (coordenada X e Y, tipo de avião, disponibilidade, type) -> Associado ao Gestor de Gares
 
 
 Pontos a fazer:

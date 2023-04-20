@@ -6,6 +6,9 @@ from dados import XMPP_SERVER, PASSWORD
 if __name__ == "__main__":
 
     tower = TowerAgent ("tower@" + XMPP_SERVER, PASSWORD)
+
+    future = tower.start()
+    future.wait()
     
     '''
     future = manager.start()

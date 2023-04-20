@@ -1,7 +1,7 @@
 from spade.agent import Agent
 import random
 
-class PlaneAgent (Agent):
+class PlaneAgent(Agent):
 
     def __init__(self, company, type, origin, destiny):
         self.company = company
