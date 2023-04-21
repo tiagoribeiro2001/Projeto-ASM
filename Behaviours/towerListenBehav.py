@@ -16,13 +16,19 @@ def available_runway(self):
     return False
 
 # Verifica o menor caminho
-def shortest_path(self):
-    lista = []
-    for r in self.runways.items():
-        if r["status"] == "free":
-            return 
-    return False
-
+def shortest_path(self, gares):
+    best_runway = None
+    best_gare = None
+    min_dist = 1000
+    for runway in self.runways.items():
+        if runway["status"] == "free":
+            for gare in gares:
+                dist = distance(runway[""])
+                if dist < min_dist:
+                    best_runway = runway.key()
+                    best_gare = gare.key()
+                    min_dist = dist
+    return (best_runway, best_gare)
 
 class towerListenBehav(OneShotBehaviour):
 
@@ -50,15 +56,36 @@ class towerListenBehav(OneShotBehaviour):
                     print(f"Tower manager requesting gare to gare manager...")
                     await self.send(msg)
 
+                    # Recebe a resposta do gestor de gares
+                    msg = await self.receive(timeout=1000)
+                    toDo = msg.get_metadata("performative")
+                    print(f"Manager tower received: {toDo}")
 
-                    # envia a mensagem de confirmação
-                    response = Message(to=msg.sender)
-                    response.body = "Landing authorized. Runway and parking available."
-                    await self.send(response)
+                    if toDo == "free_gares":
+                        # Calcula o caminho mais curto das pistas e gares disponiveis
+                        free_gares = msg.body
+
+
+
+
+                        # envia a mensagem de confirmação
+                        # FALTA ENVIAR A PISTA E GARE A ATERRAR
+                        response = Message(to=msg.sender)
+                        response.body = "Landing authorized. Runway and parking available."
+                        await self.send(response)
+
+                    elif toDo == "no_free_gares":
+                        # envia a mensagem de negação
+                        response = Message(to=msg.sender)
+                        response.body = "Landing not authorized. No parking available."
+                        await self.send(response)
+
+
+                    
                 else:
                     # envia a mensagem de negação
                     response = Message(to=msg.sender)
-                    response.body = "Landing not authorized. No runway or parking available."
+                    response.body = "Landing not authorized. No runway available."
                     await self.send(response)
                     
 
