@@ -6,7 +6,7 @@ class TowerAgent(Agent):
     async def setup(self):
         print("Tower Agent {}".format(str(self.jid)) + " starting...")
     
-        avioes = []
+        queue = []
 
         self.runways = {
             "r1": {"location": (400, 400), "status": "free"},
