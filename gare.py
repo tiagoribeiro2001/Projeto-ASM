@@ -1,6 +1,7 @@
 from spade.agent import Agent
+from Behaviours.gareListenBehav import gareListenBehav
 
-class Gare(Agent):
+class GareAgent(Agent):
 
     async def setup(self):
         self.gares = {
@@ -24,6 +25,9 @@ class Gare(Agent):
                 "g18": {"location": (850 , 300), "type": "cargo"     , "status": "free"},
                 "g19": {"location": (900 , 300), "type": "commercial", "status": "free"},
                 "g20": {"location": (950 , 300), "type": "cargo"     , "status": "free"}
-            }      
+            }
         
+        print("Gare Agent {}".format(str(self.jid)) + "starting...")
     
+        a = gareListenBehav()
+        self.add_behaviour(a)

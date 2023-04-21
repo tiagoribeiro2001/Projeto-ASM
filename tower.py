@@ -1,10 +1,10 @@
 from spade.agent import Agent
-from Behaviours.landingRequestBehav import LandingRequestBehav
+from Behaviours.towerListenBehav import towerListenBehav
 
 class TowerAgent(Agent):
     
     async def setup(self):
-        print("Tower Agent {}".format(str(self.jid)) + "starting...")
+        print("Tower Agent {}".format(str(self.jid)) + " starting...")
     
         avioes = []
 
@@ -15,7 +15,5 @@ class TowerAgent(Agent):
             "r4": {"location": (400, 600), "status": "free"}
         }
         
-         
-
-        a = LandingRequestBehav()
+        a = towerListenBehav()
         self.add_behaviour(a)

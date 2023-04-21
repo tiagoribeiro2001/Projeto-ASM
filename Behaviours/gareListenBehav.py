@@ -47,3 +47,9 @@ class gareListenBehav(OneShotBehaviour):
                     response.body = "There are no free gares."
                     print(f"Gare manager sending tower manager that there are no free gares...")
                     await self.send(response)
+
+            ###########################################################################################
+            #elif toDo == "ocupation_gare" :
+            #    type = msg.body
+
+
