@@ -71,13 +71,15 @@ class PlaneListenBehav(CyclicBehaviour):
             response.set_metadata("performative", "free_runway")
             json_data = jsonpickle.encode(self.agent.runway)
             response.body = json_data
-            print(f"Plane {str(self.agent.jid)} took off. Indicating control tower that the runway {str(self.agent.runway)} is free...")
             await self.send(response)
+            print(f"Plane {str(self.agent.jid)} took off. Indicating control tower that the runway {str(self.agent.runway)} is free...")
             
-            print(f"Plane {str(self.agent.jid)} has left the airport.")
+            
+            
             self.agent.state = "air"
 
             await self.agent.stop()
+            print(f"Plane {str(self.agent.jid)} has left the airport.")
 
 
         # Descolagem nao autorizada

@@ -1,5 +1,4 @@
 from spade.agent import Agent
-from Behaviours.planeStartBehav import PlaneStartBehav
 from Behaviours.planeListenBehav import PlaneListenBehav
 from Behaviours.landingRequestBehav import LandingRequestBehav
 from Behaviours.takeoffRequestBehav import TakeoffRequestBehav
@@ -31,9 +30,6 @@ class PlaneAgent(Agent):
         self.destiny = random.choice(destinies)
 
         print("Plane Agent {}".format(str(self.jid)) + " starting...")
-
-        a = PlaneStartBehav()
-        self.add_behaviour(a)
 
         b = PlaneListenBehav()
         self.add_behaviour(b)
