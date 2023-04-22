@@ -32,6 +32,17 @@ def shortest_path(runways, gares):
                     min_dist = dist
     return (best_runway, best_gare)
 
+def closest_runway(runways, gare):
+    best_runway = None
+    min_dist = 1000
+    for key, value in runways.items():
+        if value["status"] == "free":
+            dist = distance(value["location"], gare)
+            if dist < min_dist:
+                best_runway = key
+                min_dist = dist
+    return best_runway
+
 class towerListenBehav(CyclicBehaviour):
 
     async def run(self):
@@ -47,12 +58,14 @@ class towerListenBehav(CyclicBehaviour):
             print(f"Landing request received from {msg.sender}. Aircraft: {msg.body}")
             json_data = msg.body
             plane_info = jsonpickle.decode(json_data)
+
             type = plane_info["type"]
+            json_data = jsonpickle.encode(type)
 
             # Torre de controlo contacta o gestor de gares para verificar se existe uma gare livre
             request_gare = Message(to="gare@" + XMPP_SERVER)
             request_gare.set_metadata("performative", "request_gare")
-            request_gare.body = f"{type}"
+            request_gare.body = json_data
             print(f"Control tower contacting gare manager to check if there are any available gares...")
             await self.send(request_gare)
 
@@ -86,7 +99,7 @@ class towerListenBehav(CyclicBehaviour):
                     gare_occupy.set_metadata("performative", "gare_occupy")
                     json_data = jsonpickle.encode(gare)
                     gare_occupy.body = json_data
-                    print(f"Tower manager informing which gare the plane is going to use to gare manager...")
+                    print(f"Control tower informing which gare the plane is going to use to gare manager...")
                     await self.send(gare_occupy)
 
                     # Envia a mensagem de confirmacao para o aviao
@@ -96,38 +109,89 @@ class towerListenBehav(CyclicBehaviour):
                                     "gare": gare}
                     json_data = jsonpickle.encode(landing_info)
                     response_plane.body = json_data
+                    print(f"Control tower sending landing confirmation to {str(msg.sender)}")
                     await self.send(response_plane)
+
+                    # Recebe a resposta de aterragem do avião e liberta a pista
+                    plane_landing = await self.receive(timeout=1000)
+                    toDo = plane_landing.get_metadata("performative")
+                    print(f"Control tower received from plane: {toDo}")
+                    json_data = plane_landing.body
+                    free_runway = jsonpickle.decode(json_data)
+                    self.agent.runways[free_runway]["status"] = "free"
+                    print(f"Runway {str(free_runway)} is now free")
+
 
                 # Nao existem pistas livres
                 else:
+                    # Adiciona a lista de espera de aterragens
+                    self.agent.landingQueue[plane_info["id"]] = plane_info
+
                     # Envia a mensagem ao aviao a dizer que nao ha pistas disponiveis e tera que aguardar
-
-                    # FALTA A PARTE DE POR O AVIAO NA LISTA DE ESPERA
-
-
-                    response = Message(to=msg.sender)
-                    response.body = "Landing not authorized. No runway available."
+                    response = Message(to=str(msg.sender))
+                    response.set_metadata("performative", "landing_not_authorized")
+                    response.body = "Landing not authorized. No runway available. Added to the landing queue."
                     await self.send(response)
                     
             # Se receber que nao existem gares
             elif toDo == "no_free_gares":
                 # Envia a mensagem de negacao
-                response = Message(to=msg.sender)
+                response = Message(to=str(msg.sender))
                 response.body = "Landing not authorized. No parking available."
                 await self.send(response)
 
+        # Recebe pedido de aviao a querer levantar voo
         elif toDo == "takeoff_request":
-            # Processa a mensagem e verifica se ha espaço disponivel para levantar
+            # Processa a mensagem e verifica se ha espaço disponivel para levantar voo
             print(f"Takeoff request received from {msg.sender}. Aircraft: {msg.body}")
+            json_data = msg.body
+            plane_info = jsonpickle.decode(json_data)
 
-            if available_runway:
-                # Envia a mensagem de confirmacao
-                response = Message(to=msg.sender)
-                response.body = "Takeoff authorized. Runway available."
-                await self.send(response)
+            # Se existirem pistas disponiveis
+            if available_runway(self.agent.runways):
+
+                plane_gare = plane_info["gare"]
+                json_data = jsonpickle.encode(plane_gare)
+
+                # Envia mensagem ao gestor de gares para obter informacoes da gare atual do aviao
+                gare_location = Message(to="gare@" + XMPP_SERVER)
+                gare_location.set_metadata("performative", "gare_location")
+                gare_location.body = json_data
+                await self.send(gare_location)
+
+                # Recebe a resposta do gestor de gares com a localizacao da gare
+                gare_response = await self.receive(timeout=1000)
+                toDo = gare_response.get_metadata("performative")
+                print(f"Control tower received from gare manager: {toDo}")
+                json_data = gare_response.body
+                gare_loc = jsonpickle.decode(json_data)
+                print(f"Control tower has the location where {str(msg.sender)} is located.")
+
+                # Calcula a pista mais proxima da gare do aviao
+                runway = closest_runway(self.agent.runways, gare_loc)
+                
+                # Envia a mensagem de confirmacao de descolagem ao aviao
+                json_data = jsonpickle.encode(runway)
+                response_plane = Message(to=str(msg.sender))
+                response_plane.set_metadata("performative", "takeoff_authorized")
+                response_plane.body = json_data
+                await self.send(response_plane)
+
+                # Desocupa a pista
+                plane_takeoff = await self.receive(timeout=1000)
+                toDo = plane_takeoff.get_metadata("performative")
+                print(f"Control tower received from plane: {toDo}")
+                json_data = plane_takeoff.body
+                free_runway = jsonpickle.decode(json_data)
+                self.agent.runways[free_runway]["status"] = "free"
+                print(f"Runway {str(free_runway)} is now free")
 
             else:
+                # Adiciona a lista de espera de descolagens
+                self.agent.takeoffQueue[plane_info["id"]] = plane_info
+
                 # Envia a mensagem de negacao
-                response = Message(to=msg.sender)
-                response.body = "Takeoff not authorized. No runway available."
+                response = Message(to=str(msg.sender))
+                response_plane.set_metadata("performative", "takeoff_not_authorized")
+                response.body = "Takeoff not authorized. No runway available. Added to the takeoff queue."
                 await self.send(response)

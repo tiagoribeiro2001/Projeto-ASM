@@ -19,8 +19,9 @@ class gareListenBehav(CyclicBehaviour):
         toDo = msg.get_metadata("performative")
         print(f"Manager gare received: {toDo}")
 
-        if toDo == "request_gare" :
-            type = msg.body
+        if toDo == "request_gare":
+            json_data = msg.body
+            type = jsonpickle.decode(json_data)
 
             # Gares disponiveis
             free_gares = available_gares(self.agent.gares, type)
@@ -56,6 +57,23 @@ class gareListenBehav(CyclicBehaviour):
                 response.body = "There are no free gares."
                 print(f"Gare manager sending tower manager that there are no free gares...")
                 await self.send(response)
+        
+        # Recebe a mensagem da torre de controlo a pedir a localizacao da gare
+        elif toDo == "gare_location":
+
+            json_data = msg.body
+            gare = jsonpickle.decode(json_data)
+
+            # Vai buscar a localizacao da gare
+            gare_location = self.agent.gares[gare]["location"]
+
+            # Envia a localizacao da gare para a torre de controlo
+            json_data = jsonpickle.encode(gare_location)
+            response = Message(to=str(msg.sender))
+            response.set_metadata("performative", "gare_response")
+            response.body = json_data
+            print(f"Gare manager sent gare location to control tower.")
+            await self.send(response)
 
        
 

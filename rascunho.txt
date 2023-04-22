@@ -29,7 +29,43 @@ Pontos a fazer:
 -> Definir uma lista de espera com um tamanho (Ver o passo seguinte)
 -> Ajustar o nº de aviões em espera tendo em conta o número de gares disponiveis
 -> Inicializar com 2 aviões a levantar e 2 aviões a aterrar.
--> A Torre de controlo diz ao avião qual a pista e a gare a utilizar de modo a que a distância entre a pista e gare seja a mais pequena
+-> (FEITO) A Torre de controlo diz ao avião qual a pista e a gare a utilizar de modo a que a distância entre a pista e gare seja a mais pequena
 -> Definir um tempo entre aterragem do avião, o tempo de circulação da pista e tempo entre a pista e a gare
 -> Se um avião quer aterrar e demorar muito tempo no ar, este vai para outro aeroporto
 -> Se houver conflitos entre 1 avião aterrar e 1 avião a levantar, implementar um sistema de prioridades
+
+
+
+Tempo de espera no ar antes de ir embora -> waitTime
+Tempo de aterragem (ar e toca na terra) -> landingTime
+Tempo de pista -> runwayTime
+Tempo entre a pista e a gare -> moveTime
+
+
+
+
+
+Avião chega informa que quer aterrar (planeStart -> towerListen )
+Torre recebe pedido verifica: 
+    - Não há gares? - Vai com o crl
+    - Há gares? Então:
+    - Há Pistas? -> Aterra
+    - Não há pistas:
+        -> Lista de espera
+        -> informar que ficou na lista de espera (towerListen -> planeListen)
+        -> Inicializar o counter de espera no ar 
+        -> Quando alguma pista ficar livre chamar o primeiro na fila de espera, informar o avião (towerListen -> planeListon)
+
+
+-------- Descolar --------
+Avião faz pedido à torre de controlo
+Torre de controlo verifica se há pista disponivel
+    há:
+        Torre de controlo calcula a melhor pista
+        Informa o avião
+        O avião deixa de ocupar a gare
+        A torre de controlo informa o gestor de gare que a gare ficou livre
+        O avião ocupa a pista 
+
+    não há:
+        Avião fica na lista de espera

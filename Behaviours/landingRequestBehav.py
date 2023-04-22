@@ -15,9 +15,10 @@ class LandingRequestBehav(OneShotBehaviour):
                       "destiny": self.agent.destiny,
                       "runway": self.agent.runway,
                       "gare": self.agent.gare,
-                      "airTime": str(self.agent.airTime),
+                      "waitTime": str(self.agent.waitTime),
                       "landingTime": str(self.agent.landingTime),
-                      "groundTime": str(self.agent.landingTime),
+                      "runwayTime": str(self.agent.runwayTime),
+                      "moveTime": str(self.agent.moveTime)
                       }
         json_data = jsonpickle.encode(plane_info)
 

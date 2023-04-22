@@ -8,7 +8,7 @@ import random
 class PlaneAgent(Agent):
 
     async def setup(self):
-        state = ["air", "ground"]
+        state = ["air", "ground", "parked"]
         companies = ["RyanAir", "EasyJet", "TAP", "Emirates", "Qatar Airways", "Turkish Airlines", "Etihad Airways"]
         types = ["cargo", "commercial"]
         origins = ["Porto", "Lisboa", "Madrid", "Barcelona", "Paris", "Marselha"]
@@ -16,12 +16,13 @@ class PlaneAgent(Agent):
 
         self.state = random.choice(state)
         self.runway = None
-        self.gare = None
+        self.gare = "g1"
 
         # Tempo que demora a aterrar e que fica no aeroporto (podemos meter random)
-        self.airTime = 5
+        self.waitTime = 5
         self.landingTime = 5
-        self.groundTime = 5
+        self.runwayTime = 5
+        self.moveTime = 5
 
         self.company = random.choice(companies)
         self.type = random.choice(types)
@@ -37,8 +38,8 @@ class PlaneAgent(Agent):
         b = PlaneListenBehav()
         self.add_behaviour(b)
 
-        c = LandingRequestBehav()
-        self.add_behaviour(c)
+        # c = LandingRequestBehav()
+        # self.add_behaviour(c)
 
-        # d = TakeoffRequestBehav()
-        # self.add_behaviour(d)
+        d = TakeoffRequestBehav()
+        self.add_behaviour(d)
