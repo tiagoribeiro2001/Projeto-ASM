@@ -68,25 +68,35 @@ class towerListenBehav(CyclicBehaviour):
                 if available_runway(self.agent.runways):
 
                     # Calcula o caminho mais curto das pistas e gares disponiveis
-                    json_data = msg.body
+                    json_data = response_gare.body
                     free_gares = jsonpickle.decode(json_data)
                     info = shortest_path(self.agent.runways, free_gares)
 
-                    # Envia a mensagem de confirmacao para o aviao
-                    response = Message(to=str(msg.sender))
-                    print(str(msg.sender))
-                    response.body = f"Landing authorized. Runway and parking available. Runway: {info[0]}. Gare: {info[1]}."
-                    await self.send(response)
+                    # Pista escolhida para aterrar
+                    runway = info[0]
+                    # Gare escolhida para estacionar
+                    gare = info[1]
 
-                    # Ocupação da pista
-                    self.agent.runways[info[0]]["status"] = "occupied"
+                    # Altera o estado da pista
+                    self.agent.runways[runway]["status"] = "occupied"
+                    print(f"Runway {runway} occupied ...")
 
                     # Envia a mensagem de ocupacao da gare para o gestor de gares
-                    gare_info = Message(to=response_gare.sender)
-                    gare_info.set_metadata("performative", "gare_info")
-                    gare_info.body = f"{info[1]}"
+                    gare_occupy = Message(to=str(response_gare.sender))
+                    gare_occupy.set_metadata("performative", "gare_occupy")
+                    json_data = jsonpickle.encode(gare)
+                    gare_occupy.body = json_data
                     print(f"Tower manager informing which gare the plane is going to use to gare manager...")
-                    await self.send(gare_info)
+                    await self.send(gare_occupy)
+
+                    # Envia a mensagem de confirmacao para o aviao
+                    response_plane = Message(to=str(msg.sender))
+                    response_plane.set_metadata("performative", "landing_authorized")
+                    landing_info = {"runway": runway,
+                                    "gare": gare}
+                    json_data = jsonpickle.encode(landing_info)
+                    response_plane.body = json_data
+                    await self.send(response_plane)
 
                 # Nao existem pistas livres
                 else:

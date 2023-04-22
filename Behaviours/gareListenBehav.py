@@ -30,12 +30,24 @@ class gareListenBehav(CyclicBehaviour):
                 # Codifica o dicionario de gares disponiveis
                 json_data = jsonpickle.encode(free_gares)
                 
-                # manda a resposta
+                # Manda as gares disponiveis para a torre de controlo
                 response = Message(to=str(msg.sender))
                 response.set_metadata("performative", "free_gares")
                 response.body = json_data
                 print(f"Gare manager sending control tower the free gares...")
                 await self.send(response)
+
+                # Espera resposta da torre de controlo
+                response_tower = await self.receive(timeout=1000)
+                toDo = response_tower.get_metadata("performative")
+                print(f"Manager gare received: {toDo}")
+
+                if toDo == "gare_occupy":
+                    json_data = response_tower.body
+                    occupied_gare = jsonpickle.decode(json_data)
+                    self.agent.gares[occupied_gare]["status"] = "occupied"
+                    print(f"Gare {occupied_gare} occupied ...")
+
 
             # Se não houver gares disponíveis
             else:
@@ -45,9 +57,5 @@ class gareListenBehav(CyclicBehaviour):
                 print(f"Gare manager sending tower manager that there are no free gares...")
                 await self.send(response)
 
-        elif toDo == "ocupation_gare" :
-            info = msg.body
-            self.gares.info["status"] = "occupied"
-            print(f"Gare {info} ocupada ...")
-
+       
 

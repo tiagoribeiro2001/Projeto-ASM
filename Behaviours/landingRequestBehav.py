@@ -15,6 +15,7 @@ class LandingRequestBehav(OneShotBehaviour):
                       "destiny": self.agent.destiny,
                       "runway": self.agent.runway,
                       "gare": self.agent.gare,
+                      "airTime": str(self.agent.airTime),
                       "landingTime": str(self.agent.landingTime),
                       "groundTime": str(self.agent.landingTime),
                       }
