@@ -70,15 +70,18 @@ class towerListenBehav(CyclicBehaviour):
                     free_gares = jsonpickle.decode(json_data)
                     info = shortest_path(free_gares)
 
-                    # Envia a mensagem de confirmação
+                    # Envia a mensagem de confirmação para o avião
                     response = Message(to=msg.sender)
                     response.body = f"Landing authorized. Runway and parking available. Runway: {info[0].key()}. Gare: {info[1].key()}."
                     await self.send(response)
-                    
+
+                    # Ocupação da pista
+                    self.runways[info[0]]["status"] = "occupied"
+
                     # Envia a mensagem de ocupação da gare para o gestor de gares
                     gare_info = Message(to=response_gare.sender)
                     gare_info.set_metadata("performative", "gare_info")
-                    gare_info.body = f"{info[0].key()}"
+                    gare_info.body = f"{info[1]}"
                     print(f"Tower manager informing which gare the plane is going to use to gare manager...")
                     await self.send(gare_info)
 

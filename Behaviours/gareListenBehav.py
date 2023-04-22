@@ -46,8 +46,9 @@ class gareListenBehav(CyclicBehaviour):
                 print(f"Gare manager sending tower manager that there are no free gares...")
                 await self.send(response)
 
-        ###########################################################################################
-        #elif toDo == "ocupation_gare" :
-        #    type = msg.body
+        elif toDo == "ocupation_gare" :
+            info = msg.body
+            self.gares.info["status"] = "occupied"
+            print(f"Gare {info} ocupada ...")
 
 

@@ -30,4 +30,6 @@ Pontos a fazer:
 -> Ajustar o nº de aviões em espera tendo em conta o número de gares disponiveis
 -> Inicializar com 2 aviões a levantar e 2 aviões a aterrar.
 -> A Torre de controlo diz ao avião qual a pista e a gare a utilizar de modo a que a distância entre a pista e gare seja a mais pequena
--> 
+-> Definir um tempo entre aterragem do avião, o tempo de circulação da pista e tempo entre a pista e a gare
+-> Se um avião quer aterrar e demorar muito tempo no ar, este vai para outro aeroporto
+-> Se houver conflitos entre 1 avião aterrar e 1 avião a levantar, implementar um sistema de prioridades
