@@ -11,24 +11,24 @@ def distance(p1, p2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
 # Verifica se existe alguma pista disponível 
-def available_runway(self):
-    for runway in self.runways.items():
-        if runway["status"] == "free":
+def available_runway(runways):
+    for key, value in runways.items():
+        if value["status"] == "free":
             return True
     return False
 
-# Verifica o menor caminho
-def shortest_path(self, gares):
+# Verifica o menor caminho entre as pistas e gares disponiveis
+def shortest_path(runways, gares):
     best_runway = None
     best_gare = None
     min_dist = 1000
-    for runway in self.runways.items():
-        if runway["status"] == "free":
-            for gare in gares:
-                dist = distance(runway["location"], gare["location"])
+    for key1, value1 in runways.items():
+        if value1["status"] == "free":
+            for key2, value2 in gares.items():
+                dist = distance(value1["location"], value2["location"])
                 if dist < min_dist:
-                    best_runway = runway.key()
-                    best_gare = gare.key()
+                    best_runway = key1
+                    best_gare = key2
                     min_dist = dist
     return (best_runway, best_gare)
 
@@ -45,8 +45,9 @@ class towerListenBehav(CyclicBehaviour):
 
             # processa a mensagem e verifica se há espaço disponível para aterrar
             print(f"Landing request received from {msg.sender}. Aircraft: {msg.body}")
-            info = msg.body.split("|")
-            type = info[2]
+            json_data = msg.body
+            plane_info = jsonpickle.decode(json_data)
+            type = plane_info["type"]
 
             # Torre de controlo contacta o gestor de gares para verificar se existe uma gare livre
             request_gare = Message(to="gare@" + XMPP_SERVER)
@@ -58,27 +59,29 @@ class towerListenBehav(CyclicBehaviour):
             # Recebe a resposta do gestor de gares
             response_gare = await self.receive(timeout=1000)
             toDo = response_gare.get_metadata("performative")
-            print(f"Control tower received: {toDo}")
+            print(f"Control tower received from gare manager: {toDo}")
 
             # Se receber que existem gares livres
             if toDo == "free_gares":
                 
-                # Depois de confirmada a existência de gares verifica se há pistas livres para aterragem 
-                if available_runway:
+                # Depois de confirmada a existencia de gares verifica se ha pistas livres para aterragem 
+                if available_runway(self.agent.runways):
+
                     # Calcula o caminho mais curto das pistas e gares disponiveis
                     json_data = msg.body
                     free_gares = jsonpickle.decode(json_data)
-                    info = shortest_path(free_gares)
+                    info = shortest_path(self.agent.runways, free_gares)
 
-                    # Envia a mensagem de confirmação para o avião
-                    response = Message(to=msg.sender)
-                    response.body = f"Landing authorized. Runway and parking available. Runway: {info[0].key()}. Gare: {info[1].key()}."
+                    # Envia a mensagem de confirmacao para o aviao
+                    response = Message(to=str(msg.sender))
+                    print(str(msg.sender))
+                    response.body = f"Landing authorized. Runway and parking available. Runway: {info[0]}. Gare: {info[1]}."
                     await self.send(response)
 
                     # Ocupação da pista
-                    self.runways[info[0]]["status"] = "occupied"
+                    self.agent.runways[info[0]]["status"] = "occupied"
 
-                    # Envia a mensagem de ocupação da gare para o gestor de gares
+                    # Envia a mensagem de ocupacao da gare para o gestor de gares
                     gare_info = Message(to=response_gare.sender)
                     gare_info.set_metadata("performative", "gare_info")
                     gare_info.body = f"{info[1]}"
@@ -102,10 +105,6 @@ class towerListenBehav(CyclicBehaviour):
                 response = Message(to=msg.sender)
                 response.body = "Landing not authorized. No parking available."
                 await self.send(response)
-
-                
-        elif toDo == "free_gares":
-            print("coco")
 
         elif toDo == "takeoff_request":
             # Processa a mensagem e verifica se ha espaço disponivel para levantar

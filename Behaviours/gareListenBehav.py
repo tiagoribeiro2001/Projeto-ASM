@@ -4,9 +4,9 @@ from dados import XMPP_SERVER
 import jsonpickle
 
 # Verifica se existe alguma pista disponível para um certo tipo de aviao e devolve um dicionario destas
-def available_gares(agent, type):
+def available_gares(gares, type):
     available = {}
-    for key, value in agent.gares.items():
+    for key, value in gares.items():
         if value["type"] == type and value["status"] == "free":
             available[key] = value
     return available
@@ -23,7 +23,7 @@ class gareListenBehav(CyclicBehaviour):
             type = msg.body
 
             # Gares disponiveis
-            free_gares = available_gares(self.agent, type)
+            free_gares = available_gares(self.agent.gares, type)
 
             # Se houver gares disponíveis
             if free_gares:
@@ -31,7 +31,7 @@ class gareListenBehav(CyclicBehaviour):
                 json_data = jsonpickle.encode(free_gares)
                 
                 # manda a resposta
-                response = Message(to="tower@" + XMPP_SERVER)
+                response = Message(to=str(msg.sender))
                 response.set_metadata("performative", "free_gares")
                 response.body = json_data
                 print(f"Gare manager sending control tower the free gares...")
@@ -39,8 +39,7 @@ class gareListenBehav(CyclicBehaviour):
 
             # Se não houver gares disponíveis
             else:
-
-                response = Message(to=msg.sender)
+                response = Message(to=str(msg.sender))
                 response.set_metadata("performative", "no_free_gares")
                 response.body = "There are no free gares."
                 print(f"Gare manager sending tower manager that there are no free gares...")

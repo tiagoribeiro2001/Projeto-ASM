@@ -1,14 +1,30 @@
 from spade.behaviour import OneShotBehaviour
 from spade.message import Message
 from dados import XMPP_SERVER
+import jsonpickle
 
 class LandingRequestBehav(OneShotBehaviour):
     async def run(self):
-        # cria a mensagem com as informações do voo
+
+        # Obtem informacoes do voo
+        plane_info = {"id": str(self.agent.jid),
+                      "state": self.agent.state,
+                      "company": self.agent.company,
+                      "type": self.agent.type,
+                      "origin": self.agent.origin,
+                      "destiny": self.agent.destiny,
+                      "runway": self.agent.runway,
+                      "gare": self.agent.gare,
+                      "landingTime": str(self.agent.landingTime),
+                      "groundTime": str(self.agent.landingTime),
+                      }
+        json_data = jsonpickle.encode(plane_info)
+
+        # Cria a mensagem com as informacoes do voo
         msg = Message(to="tower@" + XMPP_SERVER)  # destinatário é a torre de controle
         msg.set_metadata("performative", "landing_request")
-        msg.body = f"{str(self.agent.jid)}|{self.agent.company}|{self.agent.type}|{self.agent.origin}|{self.agent.destiny}"
-        print("Plane requesting to land")
+        msg.body = json_data
+        print(f"Plane {str(self.agent.jid)} requesting to land")
         
-        # envia a mensagem
+        # Envia a mensagem
         await self.send(msg)

@@ -9,16 +9,18 @@ class PlaneAgent(Agent):
     async def setup(self):
         state = ["air", "ground"]
         companies = ["RyanAir", "EasyJet", "TAP", "Emirates", "Qatar Airways", "Turkish Airlines", "Etihad Airways"]
-        types = ["cargo", "comercial"]
+        types = ["cargo", "commercial"]
         origins = ["Porto", "Lisboa", "Madrid", "Barcelona", "Paris", "Marselha"]
         destinies = list(origins)
 
+        self.state = random.choice(state)
         self.runway = None
         self.gare = None
 
         # Tempo que demora a aterrar e que fica no aeroporto (podemos meter random)
         self.landingTime = 5
         self.groundTime = 5
+
 
         self.company = random.choice(companies)
         self.type = random.choice(types)
