@@ -39,8 +39,8 @@ class TowerLandingBehav(OneShotBehaviour):
         self.data = data
 
     async def run(self):
-        type = self.data["type"]
-        json_data = jsonpickle.encode(type)
+        # Codifica os dados do aviao que enviou o pedido
+        json_data = jsonpickle.encode(self.data)
 
         # Torre de controlo contacta o gestor de gares para verificar se existe uma gare livre
         request_gare = Message(to="gare@" + XMPP_SERVER)
@@ -50,14 +50,14 @@ class TowerLandingBehav(OneShotBehaviour):
         await self.send(request_gare)
 
         # Recebe a resposta do gestor de gares
-        response_gare = await self.receive(timeout=1000)
-        toDo = response_gare.get_metadata("performative")
+        response_list = await self.receive(timeout=1000)
+        toDo = response_list.get_metadata("performative")
         print(f"Control tower received from gare manager: {toDo}")
 
         # Recebe a lista de gares do gestor de gares
         if toDo == "list_gares":
             
-            json_data = response_gare.body
+            json_data = response_list.body
             free_gares = jsonpickle.decode(json_data)
 
             # Se houver gares livres
@@ -67,12 +67,7 @@ class TowerLandingBehav(OneShotBehaviour):
                 if available_runway(self.agent.runways):
 
                     # Calcula o caminho mais curto das pistas e gares disponiveis
-                    info = shortest_path(self.agent.runways, free_gares)
-
-                    # Pista escolhida para aterrar
-                    runway = info[0]
-                    # Gare escolhida para estacionar
-                    gare = info[1]
+                    runway, gare = shortest_path(self.agent.runways, free_gares)
 
                     # Altera o estado da pista
                     self.agent.runways[runway]["status"] = "occupied"
@@ -98,30 +93,34 @@ class TowerLandingBehav(OneShotBehaviour):
                     await self.send(response_plane)
 
                     # Recebe a resposta de aterragem do avião e liberta a pista
-                    plane_landing = await self.receive(timeout=1000)
-                    toDo = plane_landing.get_metadata("performative")
+                    free_runway = await self.receive(timeout=1000)
+                    toDo = free_runway.get_metadata("performative")
                     print(f"Control tower received from plane: {toDo}")
-                    json_data = plane_landing.body
-                    free_runway = jsonpickle.decode(json_data)
-                    self.agent.runways[free_runway]["status"] = "free"
-                    print(f"Runway {str(free_runway)} is now free")
+
+                    if toDo == "free_runway":
+
+                        json_data = free_runway.body
+                        free_runway = jsonpickle.decode(json_data)
+                        self.agent.runways[free_runway]["status"] = "free"
+                        print(f"Runway {str(free_runway)} is now free")
 
 
                 # Nao existem pistas livres
                 else:
                     # Adiciona a lista de espera de aterragens
-                    self.agent.landingQueue[plane_info["id"]] = plane_info
+                    self.agent.landingQueue[self.data["id"]] = self.data
 
                     # Envia a mensagem ao aviao a dizer que nao ha pistas disponiveis e tera que aguardar
-                    response = Message(to=str(msg.sender))
+                    response = Message(to=str(self.data["id"]))
                     response.set_metadata("performative", "landing_not_authorized")
                     response.body = "Landing not authorized. No runway available. Added to the landing queue."
                     await self.send(response)
                 
             # Se receber que nao existem gares
             else:
+
                 # Envia a mensagem de negacao
-                response = Message(to=str(self.data["type"]))
+                response = Message(to=str(self.data["id"]))
                 response.set_metadata("performative", "landing_not_authorized")
                 response.body = "Landing not authorized. No parking available."
                 print("Control tower received that there are no free gares.")

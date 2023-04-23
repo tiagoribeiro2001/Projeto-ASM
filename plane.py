@@ -15,7 +15,7 @@ class PlaneAgent(Agent):
 
         self.state = random.choice(state)
         self.runway = None
-        self.gare = "g1"
+        self.gare = None
 
         # Tempo que demora a aterrar e que fica no aeroporto (podemos meter random)
         self.waitTime = 5
@@ -31,11 +31,11 @@ class PlaneAgent(Agent):
 
         print("Plane Agent {}".format(str(self.jid)) + " starting...")
 
-        b = PlaneListenBehav()
+        a = PlaneListenBehav()
+        self.add_behaviour(a)
+
+        b = LandingRequestBehav()
         self.add_behaviour(b)
 
-        # c = LandingRequestBehav()
-        # self.add_behaviour(c)
-
-        d = TakeoffRequestBehav()
-        self.add_behaviour(d)
+        c = TakeoffRequestBehav()
+        self.add_behaviour(c)

@@ -1,0 +1,40 @@
+from spade.behaviour import OneShotBehaviour
+from spade.message import Message
+from dados import XMPP_SERVER
+import jsonpickle
+import math
+import time
+
+class PlaneTakeoffBehav(OneShotBehaviour):
+
+    def __init__(self, data, **kwargs):
+        super().__init__(**kwargs)
+        self.data = data
+
+    async def run(self):
+
+        # Altera a pista e o estado do aviao
+        self.agent.runway = self.data["runway"]
+        self.agent.state = "ground"
+
+        # Aviao a ir da gare para a pista
+        print(f"Plane {str(self.agent.jid)} going from gare {str(self.agent.gare)} to runway {str(self.agent.runway)}.")
+        self.agent.gare = None
+        time.sleep(self.agent.moveTime)
+
+        # Espera o tempo que fica na pista
+        print(f"Plane {str(self.agent.jid)} is taking off in runway {str(self.agent.runway)}")
+        time.sleep(self.agent.runwayTime)
+
+        # Envia mensagem à torre de controlo para desocupar a pista
+        response = Message(to="tower@" + XMPP_SERVER)
+        response.set_metadata("performative", "free_runway")
+        json_data = jsonpickle.encode(self.agent.runway)
+        response.body = json_data
+        await self.send(response)
+        print(f"Plane {str(self.agent.jid)} took off. Indicating control tower that the runway {str(self.agent.runway)} is free...")
+        
+        self.agent.state = "air"
+
+        await self.agent.stop()
+        print(f"Plane {str(self.agent.jid)} has left the airport.")
