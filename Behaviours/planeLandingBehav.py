@@ -29,8 +29,8 @@ class PlaneLandingBehav(OneShotBehaviour):
         response.set_metadata("performative", "free_runway")
         json_data = jsonpickle.encode(self.agent.runway)
         response.body = json_data
-        print(f"Plane {str(self.agent.jid)} indicating control tower that the runway {str(self.agent.runway)} is free...")
         await self.send(response)
+        print(f"Plane {str(self.agent.jid)} indicating control tower that the runway {str(self.agent.runway)} is free...")
 
         # Espera o tempo de viagem desde a pista ate a gare
         print(f"Plane {str(self.agent.jid)} going from runway {str(self.agent.runway)} to gare {str(self.agent.gare)}.")

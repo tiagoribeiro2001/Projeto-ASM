@@ -10,10 +10,10 @@ class gareListenBehav(CyclicBehaviour):
         # Recebe a mensagem
         msg = await self.receive(timeout=1000)
         toDo = msg.get_metadata("performative")
-        print(f"Manager gare received: {toDo}")
 
         # Recebe pedido da torre de controlo a pedir as gares livres
         if toDo == "request_gare":
+            print(f"Gare manager received: {toDo}")
             json_data = msg.body
             plane_info = jsonpickle.decode(json_data)
 
@@ -23,7 +23,7 @@ class gareListenBehav(CyclicBehaviour):
 
         # Recebe pedido da torre de controlo a pedir a localizacao da gare
         elif toDo == "gare_location_request":
-
+            print(f"Gare manager received: {toDo}")
             json_data = msg.body
             plane_info = jsonpickle.decode(json_data)
 

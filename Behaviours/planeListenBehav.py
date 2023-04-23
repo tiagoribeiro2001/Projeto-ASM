@@ -8,10 +8,11 @@ class PlaneListenBehav(CyclicBehaviour):
     async def run(self):
         msg = await self.receive(timeout=1000)
         toDo = msg.get_metadata("performative")
-        print(f"Plane received: {toDo}")
+        
 
         # Aterragem autorizada 
         if toDo == "landing_authorized":
+            print(f"Plane received: {toDo}")
             json_data = msg.body
             mensagem = jsonpickle.decode(json_data)
 
@@ -20,10 +21,11 @@ class PlaneListenBehav(CyclicBehaviour):
 
         # Aterragem nao autorizada
         elif toDo == "landing_not_authorized":
-            pass
+            print(f"Plane received: {toDo}")
     
         # Descolagem autorizada
         elif toDo == "takeoff_authorized":
+            print(f"Plane received: {toDo}")
             json_data = msg.body
             mensagem = jsonpickle.decode(json_data)
 
@@ -32,4 +34,4 @@ class PlaneListenBehav(CyclicBehaviour):
 
         # Descolagem nao autorizada
         elif toDo == "takeoff_not_authorized":
-            pass
+            print(f"Plane received: {toDo}")

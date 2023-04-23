@@ -11,10 +11,11 @@ class towerListenBehav(CyclicBehaviour):
         # Recebe a mensagem
         msg = await self.receive(timeout=1000)
         toDo = msg.get_metadata("performative")
-        print(f"Control Tower received: {toDo}")
+        
 
         # Recebe pedido de aviao a querer aterrar
         if toDo == "landing_request":
+            print(f"Control Tower received: {toDo}")
 
             # processa a mensagem e verifica se há espaço disponível para aterrar
             print(f"Landing request received from {msg.sender}. Aircraft: {msg.body}")
@@ -26,6 +27,7 @@ class towerListenBehav(CyclicBehaviour):
 
         # Recebe pedido de aviao a querer levantar voo
         elif toDo == "takeoff_request":
+            print(f"Control Tower received: {toDo}")
             
             # Processa a mensagem e verifica se ha espaço disponivel para levantar voo
             print(f"Takeoff request received from {msg.sender}. Aircraft: {msg.body}")

@@ -27,7 +27,7 @@ class GareAgent(Agent):
                 "g20": {"location": (950 , 300), "type": "cargo"     , "status": "free"}
             }
         
-        print("Gare Agent {}".format(str(self.jid)) + "starting...")
+        print("Gare Agent {}".format(str(self.jid)) + " starting...")
     
         a = gareListenBehav()
         self.add_behaviour(a)

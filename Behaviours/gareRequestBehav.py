@@ -37,7 +37,7 @@ class GareRequestBehav(OneShotBehaviour):
             # Espera resposta da torre de controlo
             gare_occupy = await self.receive(timeout=1000)
             toDo = gare_occupy.get_metadata("performative")
-            print(f"Manager gare received: {toDo}")
+            print(f"Gare manager received: {toDo}")
 
             if toDo == "gare_occupy":
 

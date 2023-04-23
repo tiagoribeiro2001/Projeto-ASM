@@ -18,10 +18,10 @@ class PlaneAgent(Agent):
         self.gare = None
 
         # Tempo que demora a aterrar e que fica no aeroporto (podemos meter random)
-        self.waitTime = 5
+        self.waitTime = 15
         self.landingTime = 5
         self.runwayTime = 5
-        self.moveTime = 5
+        self.moveTime = 5   
 
         self.company = random.choice(companies)
         self.type = random.choice(types)
@@ -37,5 +37,5 @@ class PlaneAgent(Agent):
         b = LandingRequestBehav()
         self.add_behaviour(b)
 
-        c = TakeoffRequestBehav()
-        self.add_behaviour(c)
+        # c = TakeoffRequestBehav()
+        # self.add_behaviour(c)
