@@ -70,21 +70,9 @@ class TowerTakeoffBehav(OneShotBehaviour):
                 response_plane.body = json_data
                 await self.send(response_plane)
 
-                # Desocupa a pista
-                plane_takeoff = await self.receive(timeout=1000)
-                toDo = plane_takeoff.get_metadata("performative")
-                print(f"Control tower received from plane: {toDo}")
-
-                if toDo == "free_runway":
-                
-                    json_data = plane_takeoff.body
-                    free_runway = jsonpickle.decode(json_data)
-                    self.agent.runways[free_runway]["status"] = "free"
-                    print(f"Runway {str(free_runway)} is now free")
-
         else:
             # Adiciona a lista de espera de descolagens
-            self.agent.takeoffQueue[self.data["id"]] = self.data
+            self.agent.takeoffQueue.add(self.data)
 
             # Envia a mensagem de negacao
             response = Message(to=str(self.data["id"]))

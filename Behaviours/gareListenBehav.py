@@ -1,6 +1,7 @@
 from spade.behaviour import CyclicBehaviour
 from Behaviours.gareRequestBehav import GareRequestBehav
 from Behaviours.gareLocationBehav import GareLocationBehav
+from Behaviours.gareAvailableBehav import GareAvailableBehav
 import jsonpickle
 
 
@@ -28,4 +29,12 @@ class gareListenBehav(CyclicBehaviour):
             plane_info = jsonpickle.decode(json_data)
 
             a = GareLocationBehav(plane_info)
+            self.agent.add_behaviour(a)
+
+        elif toDo == "available_gares":
+            print(f"Gare manager received: {toDo}")
+            json_data = msg.body
+            plane_type = jsonpickle.decode(json_data)
+
+            a = GareAvailableBehav(plane_type)
             self.agent.add_behaviour(a)

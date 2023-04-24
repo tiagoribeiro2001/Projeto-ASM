@@ -2,8 +2,7 @@ from spade.behaviour import OneShotBehaviour
 from spade.message import Message
 from dados import XMPP_SERVER
 import jsonpickle
-import math
-import time
+import asyncio
 
 class PlaneTakeoffBehav(OneShotBehaviour):
 
@@ -20,11 +19,11 @@ class PlaneTakeoffBehav(OneShotBehaviour):
         # Aviao a ir da gare para a pista
         print(f"Plane {str(self.agent.jid)} going from gare {str(self.agent.gare)} to runway {str(self.agent.runway)}.")
         self.agent.gare = None
-        time.sleep(self.agent.moveTime)
+        await asyncio.sleep(self.agent.moveTime)
 
         # Espera o tempo que fica na pista
         print(f"Plane {str(self.agent.jid)} is taking off in runway {str(self.agent.runway)}")
-        time.sleep(self.agent.runwayTime)
+        await asyncio.sleep(self.agent.runwayTime)
 
         # Envia mensagem à torre de controlo para desocupar a pista
         response = Message(to="tower@" + XMPP_SERVER)

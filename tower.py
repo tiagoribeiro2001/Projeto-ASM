@@ -6,10 +6,10 @@ class TowerAgent(Agent):
     async def setup(self):
         print("Tower Agent {}".format(str(self.jid)) + " starting...")
     
-        landingQueue = {}
+        self.landingQueue = []
         #max_queue_size = 10
 
-        takeoffQueue = {}
+        self.takeoffQueue = []
         
         self.runways = {
             "r1": {"location": (400, 400), "status": "free"},

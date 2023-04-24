@@ -1,8 +1,8 @@
 from spade.behaviour import CyclicBehaviour
 from Behaviours.towerLandingBehav import TowerLandingBehav
 from Behaviours.towerTakeoffBehav import TowerTakeoffBehav
+from Behaviours.towerFreeRunwayBehav import TowerFreeRunwayBehav
 import jsonpickle
-
 
 
 class towerListenBehav(CyclicBehaviour):
@@ -35,5 +35,16 @@ class towerListenBehav(CyclicBehaviour):
             plane_info = jsonpickle.decode(json_data)
 
             a = TowerTakeoffBehav(plane_info)
+            self.agent.add_behaviour(a)
+
+        elif toDo == "free_runway":
+            print(f"Control Tower received: {toDo}")
+
+            # Processa a mensagem e verifica se ha espaço disponivel para levantar voo
+            print(f"Free runway request received from {msg.sender}. Runway: {msg.body}")
+            json_data = msg.body
+            runway = jsonpickle.decode(json_data)
+
+            a = TowerFreeRunwayBehav(runway)
             self.agent.add_behaviour(a)
             

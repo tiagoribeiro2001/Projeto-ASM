@@ -92,23 +92,10 @@ class TowerLandingBehav(OneShotBehaviour):
                     print(f"Control tower sending landing confirmation to {jid_plane}")
                     await self.send(response_plane)
 
-                    # Recebe a resposta de aterragem do avião e liberta a pista
-                    free_runway = await self.receive(timeout=1000)
-                    toDo = free_runway.get_metadata("performative")
-                    print(f"Control tower received from plane: {toDo}")
-
-                    if toDo == "free_runway":
-
-                        json_data = free_runway.body
-                        free_runway = jsonpickle.decode(json_data)
-                        self.agent.runways[free_runway]["status"] = "free"
-                        print(f"Runway {str(free_runway)} is now free")
-
-
                 # Nao existem pistas livres
                 else:
                     # Adiciona a lista de espera de aterragens
-                    self.agent.landingQueue[self.data["id"]] = self.data
+                    self.agent.landingQueue.add(self.data)
 
                     # Envia a mensagem ao aviao a dizer que nao ha pistas disponiveis e tera que aguardar
                     response = Message(to=str(self.data["id"]))

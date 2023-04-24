@@ -12,7 +12,6 @@ if __name__ == "__main__":
     manager = ManagerAgent("manager@" + XMPP_SERVER, PASSWORD)
     plane = PlaneAgent("plane1@" + XMPP_SERVER, PASSWORD)
 
-    
     future = gare.start()
     future.wait()
 
@@ -25,7 +24,6 @@ if __name__ == "__main__":
     future = plane.start()
     future.wait()
 
-    
     while plane.is_alive():
         try:
             time.sleep(1)
