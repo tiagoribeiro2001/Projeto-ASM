@@ -94,14 +94,26 @@ class TowerLandingBehav(OneShotBehaviour):
 
                 # Nao existem pistas livres
                 else:
-                    # Adiciona a lista de espera de aterragens
-                    self.agent.landingQueue.add(self.data)
 
-                    # Envia a mensagem ao aviao a dizer que nao ha pistas disponiveis e tera que aguardar
-                    response = Message(to=str(self.data["id"]))
-                    response.set_metadata("performative", "landing_not_authorized")
-                    response.body = "Landing not authorized. No runway available. Added to the landing queue."
-                    await self.send(response)
+                    if self.agent.maxQueueSize > len(self.agent.landingQueue):
+
+                        # Adiciona a lista de espera de aterragens
+                        self.agent.landingQueue.add(self.data)
+
+                        # Envia a mensagem ao aviao a dizer que nao ha pistas disponiveis e tera que aguardar
+                        response = Message(to=str(self.data["id"]))
+                        response.set_metadata("performative", "landing_not_authorized")
+                        response.body = "Landing not authorized. No runway available. Added to the landing queue."
+                        await self.send(response)
+
+                    else:
+
+                        # Comunica ao aviao a impossibilidade de aterrar
+                        response = Message(to=str(self.data["id"]))
+                        response.set_metadata("performative", "full_landing_queue")
+                        response.body = "Landing not authorized. Landing queue is full. Find another airport."
+                        await self.send(response)
+
                 
             # Se receber que nao existem gares
             else:

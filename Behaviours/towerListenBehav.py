@@ -2,6 +2,7 @@ from spade.behaviour import CyclicBehaviour
 from Behaviours.towerLandingBehav import TowerLandingBehav
 from Behaviours.towerTakeoffBehav import TowerTakeoffBehav
 from Behaviours.towerFreeRunwayBehav import TowerFreeRunwayBehav
+from Behaviours.towerTimeoutBehav import TowerTimeoutBehav
 import jsonpickle
 
 
@@ -37,6 +38,7 @@ class towerListenBehav(CyclicBehaviour):
             a = TowerTakeoffBehav(plane_info)
             self.agent.add_behaviour(a)
 
+        # Recebe pedido de aviao para esvaziar a pista
         elif toDo == "free_runway":
             print(f"Control Tower received: {toDo}")
 
@@ -47,4 +49,19 @@ class towerListenBehav(CyclicBehaviour):
 
             a = TowerFreeRunwayBehav(runway)
             self.agent.add_behaviour(a)
+        
+        # Recebe pedido de aviao a dizer esperou o tempo maximo na fila de espera
+        elif toDo == "time_out":
+            print(f"Control Tower received: {toDo}")
+
+            print(f"Time out request received from {msg.sender}.")
+            json_data = msg.body
+            id = jsonpickle.decode(json_data)
+
+            a = TowerTakeoffBehav(id)
+            self.agent.add_behaviour(a)
+
+                
+
+
             

@@ -7,7 +7,7 @@ class TowerAgent(Agent):
         print("Tower Agent {}".format(str(self.jid)) + " starting...")
     
         self.landingQueue = []
-        #max_queue_size = 10
+        self.maxQueueSize = 10
 
         self.takeoffQueue = []
         

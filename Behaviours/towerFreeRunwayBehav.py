@@ -50,11 +50,15 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
         self.data = data
 
     async def run(self):
+
+        # Liberta a pista
         self.agent.runways[self.data]["status"] = "free"
         print(f"Runway {str(self.data)} is now free")
         
+        # Percorrer a lista de espera de aterragens
         for plane in self.agent.landingQueue:
 
+            # Verifica se existe alguma gare para o tipo de avião que está a iterar
             available_gares = Message(to="gare@" + XMPP_SERVER)
             available_gares.set_metadata("performative", "available_gares")
             json_data = jsonpickle.encode(plane["type"])
@@ -69,9 +73,10 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
 
                 gare_list = jsonpickle.decode(gare_response.body)
 
+                # Verifica que a lista não veio vazia
                 if gare_list:
 
-                    runway, gare = shortest_path(self.agent.ruways, gare_list)
+                    runway, gare = shortest_path(self.agent.runways, gare_list)
 
                     if runway or gare:
 
@@ -81,8 +86,8 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
                                     "gare": gare}
                         plane_msg.body = jsonpickle.encode(landing_info)
                         await self.send(plane_msg)
-            
-
+        
+        # Percorre a lista de espera de descolagens
         for plane in self.agent.takeoffQueue:
 
             runway = closest_runway(self.agent.runways, plane["gare"])
