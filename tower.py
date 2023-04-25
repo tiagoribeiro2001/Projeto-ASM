@@ -10,6 +10,9 @@ class TowerAgent(Agent):
         self.maxQueueSize = 10
 
         self.takeoffQueue = []
+
+        self.planesLanding = []
+        self.planesTakeoff = []
         
         self.runways = {
             "r1": {"location": (400, 400), "status": "free"},

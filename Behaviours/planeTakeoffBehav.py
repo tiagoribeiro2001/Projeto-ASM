@@ -37,3 +37,25 @@ class PlaneTakeoffBehav(OneShotBehaviour):
 
         await self.agent.stop()
         print(f"Plane {str(self.agent.jid)} has left the airport.")
+
+        # Envia mensagem à torre de controlo para desocupar a pista
+        # Obtem informacoes do voo
+        plane_info = {"id": str(self.agent.jid),
+                      "state": self.agent.state,
+                      "company": self.agent.company,
+                      "type": self.agent.type,
+                      "origin": self.agent.origin,
+                      "destiny": self.agent.destiny,
+                      "runway": self.agent.runway,
+                      "gare": self.agent.gare,
+                      "waitTime": str(self.agent.waitTime),
+                      "landingTime": str(self.agent.landingTime),
+                      "runwayTime": str(self.agent.runwayTime),
+                      "moveTime": str(self.agent.moveTime)
+                      }
+        json_data = jsonpickle.encode(plane_info)
+
+        response = Message(to="tower@" + XMPP_SERVER)
+        response.set_metadata("performative", "free_plane_takeoff")
+        response.body = json_data
+        await self.send(response)

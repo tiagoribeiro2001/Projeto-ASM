@@ -68,7 +68,23 @@ class towerListenBehav(CyclicBehaviour):
 
             print(f"Information request received from manager.")
             a = TowerGiveInformationBehav()
-            self.agent.add_behaviour(a)                
+            self.agent.add_behaviour(a)   
+
+        elif toDo == "free_plane_landing":
+            print(f"Control Tower received: {toDo}")
+            print("Update the list of planes landing...")
+            json_data = msg.body
+            plane = jsonpickle.decode(json_data)
+
+            self.agent.planesLanding.remove(plane)
+
+        elif toDo == "free_plane_takeoff":
+            print(f"Control Tower received: {toDo}")
+            print("Update the list of planes takeoff...")
+            json_data = msg.body
+            plane = jsonpickle.decode(json_data)
+
+            self.agent.planesTakeoff.remove(plane)
 
 
             

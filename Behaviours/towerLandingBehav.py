@@ -66,6 +66,8 @@ class TowerLandingBehav(OneShotBehaviour):
                 # Depois de confirmada a existencia de gares verifica se ha pistas livres para aterragem 
                 if available_runway(self.agent.runways):
 
+                    
+
                     # Calcula o caminho mais curto das pistas e gares disponiveis
                     runway, gare = shortest_path(self.agent.runways, free_gares)
 
@@ -97,6 +99,9 @@ class TowerLandingBehav(OneShotBehaviour):
                         if plane["id"] == self.data:
                             self.agent.landingQueue.remove(plane)
                             print(f"Control tower removed plane {self.data} from the landing queue.")
+
+                    # Adiciona à lista de aviões que estão aterrar
+                    self.agent.planesLanding.add(self.data)
 
                 # Nao existem pistas livres
                 else:

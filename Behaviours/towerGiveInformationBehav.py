@@ -8,8 +8,8 @@ class TowerGiveInformationBehav(OneShotBehaviour):
 
     async def run(self):
 
+        json_data = jsonpickle.encode(plane_info)
         
-        json_data = jsonpickle.encode(self.data)
 
         # Envia mensagem ao manager as informacoes 
         gare_location_request = Message(to="gare@" + XMPP_SERVER)
