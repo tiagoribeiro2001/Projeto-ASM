@@ -3,6 +3,7 @@ from Behaviours.towerLandingBehav import TowerLandingBehav
 from Behaviours.towerTakeoffBehav import TowerTakeoffBehav
 from Behaviours.towerFreeRunwayBehav import TowerFreeRunwayBehav
 from Behaviours.towerTimeoutBehav import TowerTimeoutBehav
+from Behaviours.towerGiveInformationBehav import TowerGiveInformationBehav
 import jsonpickle
 
 
@@ -61,7 +62,13 @@ class towerListenBehav(CyclicBehaviour):
             a = TowerTakeoffBehav(id)
             self.agent.add_behaviour(a)
 
-                
+        # Recebe pedido para dar display das informações
+        elif toDo == "inform":
+            print(f"Control Tower received: {toDo}")
+
+            print(f"Information request received from manager.")
+            a = TowerGiveInformationBehav()
+            self.agent.add_behaviour(a)                
 
 
             

@@ -92,6 +92,12 @@ class TowerLandingBehav(OneShotBehaviour):
                     print(f"Control tower sending landing confirmation to {jid_plane}")
                     await self.send(response_plane)
 
+                    # Retira o aviao da lista de espera de aterragem
+                    for plane in self.agent.landingQueue:
+                        if plane["id"] == self.data:
+                            self.agent.landingQueue.remove(plane)
+                            print(f"Control tower removed plane {self.data} from the landing queue.")
+
                 # Nao existem pistas livres
                 else:
 

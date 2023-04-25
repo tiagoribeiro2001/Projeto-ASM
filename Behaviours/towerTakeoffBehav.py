@@ -4,7 +4,7 @@ from dados import XMPP_SERVER
 import jsonpickle
 import math
 
-#distance between two points
+# Distance between two points
 def distance(p1, p2):
     x1, y1 = p1
     x2, y2 = p2
@@ -69,6 +69,12 @@ class TowerTakeoffBehav(OneShotBehaviour):
                 response_plane.set_metadata("performative", "takeoff_authorized")
                 response_plane.body = json_data
                 await self.send(response_plane)
+
+                # Remove aviao da lista de espera de descolagens
+                for plane in self.agent.takeoffQueue:
+                    if plane["id"] == self.data:
+                        self.agent.takeoffQueue.remove(plane)
+                        print(f"Control tower removed plane {self.data} from the takeoff queue.")
 
         else:
             # Adiciona a lista de espera de descolagens

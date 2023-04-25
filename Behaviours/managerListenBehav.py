@@ -10,10 +10,18 @@ class ManagerListenBehaviour(CyclicBehaviour):
         # Cria a mensagem com as informacoes do voo
         msg = Message(to="tower@" + XMPP_SERVER)  # destinatário é a torre de controle
         msg.set_metadata("performative", "inform")
-        msg.body = json_data
-        print(f"Plane {str(self.agent.jid)} requesting to land")
+        msg.body = "Nada"
+        print(f"Asking information to tower...")
 
-        if msg:
+        # Recebe a mensagem
+        message = await self.receive(timeout=1000)
+        toDo = message.get_metadata("performative")
+
+        if toDo:
+
+
+
+
             # Processar a mensagem da torre de controle e atualizar a informação
 
             # Verificar o tipo de mensagem (aterrissagem, decolagem, etc.) e atualizar a lista de aviões (self.agent.avioes)
