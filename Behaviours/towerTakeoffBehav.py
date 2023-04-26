@@ -77,6 +77,7 @@ class TowerTakeoffBehav(OneShotBehaviour):
                         print(f"Control tower removed plane {self.data} from the takeoff queue.")
 
                 # Adiciona à lista de aviões que estão a levantar
+                self.data["runway"] = runway
                 self.agent.planesTakeoff.append(self.data)
 
         else:

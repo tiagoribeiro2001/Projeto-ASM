@@ -89,6 +89,7 @@ class TowerLandingBehav(OneShotBehaviour):
                     response_plane.set_metadata("performative", "landing_authorized")
                     landing_info = {"runway": runway,
                                     "gare": gare}
+                    
                     json_data = jsonpickle.encode(landing_info)
                     response_plane.body = json_data
                     print(f"Control tower sending landing confirmation to {jid_plane}")
@@ -100,7 +101,10 @@ class TowerLandingBehav(OneShotBehaviour):
                             self.agent.landingQueue.remove(plane)
                             print(f"Control tower removed plane {self.data} from the landing queue.")
 
-                    # Adiciona à lista de aviões que estão aterrar
+
+                    # Atualiza a informação do avião e adiciona à lista de aviões que estão aterrar
+                    self.data["runway"] = runway
+                    self.data["gare"] = gare
                     self.agent.planesLanding.append(self.data)
 
                 # Nao existem pistas livres
