@@ -1,6 +1,7 @@
 from spade.behaviour import OneShotBehaviour
 from spade.message import Message
 from dados import XMPP_SERVER
+from Behaviours.takeoffRequestBehav import TakeoffRequestBehav
 import jsonpickle
 import asyncio
 
@@ -48,5 +49,11 @@ class PlaneLandingBehav(OneShotBehaviour):
         response.set_metadata("performative", "free_plane_landing")
         response.body = json_data
         await self.send(response)
+
+        # Depois de 10 segundos envia um pedido de descolagem
+        await asyncio.sleep(10)
+        a = TakeoffRequestBehav()
+        self.agent.add_behaviour(a)
+
 
 
