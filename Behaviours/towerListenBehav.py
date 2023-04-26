@@ -63,10 +63,11 @@ class towerListenBehav(CyclicBehaviour):
             self.agent.add_behaviour(a)
 
         # Recebe pedido para dar display das informações
-        elif toDo == "inform":
+        elif toDo == "request_information":
             print(f"Control Tower received: {toDo}")
 
             print(f"Information request received from manager.")
+            
             a = TowerGiveInformationBehav()
             self.agent.add_behaviour(a)   
 
@@ -78,22 +79,22 @@ class towerListenBehav(CyclicBehaviour):
 
             # Remove aviao da lista das aterragens
             for plane in self.agent.planesLanding:
-                if plane["id"] == self.data:
-                    self.agent.takeoffQueue.remove(plane)
-                    print(f"Control tower removed plane {self.data} from the landing queue.")
+                if plane["id"] == str(msg.sender):
+                    self.agent.planesLanding.remove(plane)
+                    print(f"Control tower removed plane {msg.sender} from the planes landing list.")
             
 
         elif toDo == "free_plane_takeoff":
             print(f"Control Tower received: {toDo}")
-            print("Update the list of planes takeoff...")
+            print("Update the list of planes taking off...")
             json_data = msg.body
             plane = jsonpickle.decode(json_data)
 
             # Remove aviao da lista das descolagens
             for plane in self.agent.planesTakeoff:
-                if plane["id"] == self.data:
+                if plane["id"] == str(msg.sender):
                     self.agent.planesTakeoff.remove(plane)
-                    print(f"Control tower removed plane {self.data} from the takeoff queue.")
+                    print(f"Control tower removed plane {msg.sender} from the planes taking off list.")
 
             
 

@@ -30,8 +30,8 @@ if __name__ == "__main__":
         except KeyboardInterrupt:
             tower.stop()
             plane.stop()
-            gare.stop()
             manager.stop()
+            gare.stop()
             break
 
     '''

@@ -101,7 +101,7 @@ class TowerLandingBehav(OneShotBehaviour):
                             print(f"Control tower removed plane {self.data} from the landing queue.")
 
                     # Adiciona à lista de aviões que estão aterrar
-                    self.agent.planesLanding.add(self.data)
+                    self.agent.planesLanding.append(self.data)
 
                 # Nao existem pistas livres
                 else:
@@ -109,7 +109,7 @@ class TowerLandingBehav(OneShotBehaviour):
                     if self.agent.maxQueueSize > len(self.agent.landingQueue):
 
                         # Adiciona a lista de espera de aterragens
-                        self.agent.landingQueue.add(self.data)
+                        self.agent.landingQueue.append(self.data)
 
                         # Envia a mensagem ao aviao a dizer que nao ha pistas disponiveis e tera que aguardar
                         response = Message(to=str(self.data["id"]))

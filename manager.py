@@ -4,7 +4,7 @@ from Behaviours.managerListenBehav import ManagerListenBehaviour
 class ManagerAgent(Agent):
     
     async def setup(self):
-        print("Manager Agent {}".format(str(self.jid)) + "starting...")
+        print("Manager Agent {}".format(str(self.jid)) + " starting...")
 
         self.landingQueue = []
         self.takeoffQueue = []
@@ -20,5 +20,6 @@ class ManagerAgent(Agent):
         self.max_fila_aterragem = 10
         self.max_fila_descolagem = 10
         '''
-        a = ManagerListenBehaviour(period=5)
+
+        a = ManagerListenBehaviour(period=5.0)
         self.add_behaviour(a)   
