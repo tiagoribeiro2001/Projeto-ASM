@@ -24,7 +24,7 @@ class LandingRequestBehav(OneShotBehaviour):
 
         # Cria a mensagem com as informacoes do voo
         msg = Message(to="tower@" + XMPP_SERVER)  # destinatário é a torre de controle
-        msg.set_metadata("performative", "landing_request")
+        msg.set_metadata("performative", "request_landing")
         msg.body = json_data
         print(f"Plane {str(self.agent.jid)} requesting to land")
         

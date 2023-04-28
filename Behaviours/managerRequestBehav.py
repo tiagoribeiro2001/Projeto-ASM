@@ -3,7 +3,7 @@ from spade.message import Message
 from dados import XMPP_SERVER
 import jsonpickle
 
-class ManagerListenBehaviour(PeriodicBehaviour):
+class ManagerRequestBehav(PeriodicBehaviour):
 
     async def run(self):
         
@@ -31,8 +31,8 @@ class ManagerListenBehaviour(PeriodicBehaviour):
 
     def display_info(self):
         print("------------------ Airport Information ------------------")
-        print("Landing Queue: ", self.agent.landingQueue)
-        print("Takeoff Queue: ", self.agent.takeoffQueue)
-        print("Planes Landing: ", self.agent.planesLanding)
-        print("Planes Takeoff: ", self.agent.planesTakeoff)
+        print("Landing queue: ", self.agent.landingQueue)
+        print("Takeoff queue: ", self.agent.takeoffQueue)
+        print("Planes landing: ", self.agent.planesLanding)
+        print("Planes taking off: ", self.agent.planesTakeoff)
         print("---------------------------------------------------------")

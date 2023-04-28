@@ -44,7 +44,7 @@ class TowerLandingBehav(OneShotBehaviour):
 
         # Torre de controlo contacta o gestor de gares para verificar se existe uma gare livre
         request_gare = Message(to="gare@" + XMPP_SERVER)
-        request_gare.set_metadata("performative", "request_gare")
+        request_gare.set_metadata("performative", "request")
         request_gare.body = json_data
         print(f"Control tower contacting gare manager to check if there are any available gares...")
         await self.send(request_gare)
@@ -55,7 +55,7 @@ class TowerLandingBehav(OneShotBehaviour):
         print(f"Control tower received from gare manager: {toDo}")
 
         # Recebe a lista de gares do gestor de gares
-        if toDo == "list_gares":
+        if toDo == "inform":
             
             json_data = response_list.body
             free_gares = jsonpickle.decode(json_data)
@@ -66,46 +66,46 @@ class TowerLandingBehav(OneShotBehaviour):
                 # Depois de confirmada a existencia de gares verifica se ha pistas livres para aterragem 
                 if available_runway(self.agent.runways):
 
-                    
-
                     # Calcula o caminho mais curto das pistas e gares disponiveis
                     runway, gare = shortest_path(self.agent.runways, free_gares)
-
-                    # Altera o estado da pista
-                    self.agent.runways[runway]["status"] = "occupied"
-                    print(f"Runway {runway} occupied ...")
-
-                    # Envia a mensagem de ocupacao da gare para o gestor de gares
-                    gare_occupy = Message(to="gare@" + XMPP_SERVER)
-                    gare_occupy.set_metadata("performative", "gare_occupy")
-                    json_data = jsonpickle.encode(gare)
-                    gare_occupy.body = json_data
-                    print(f"Control tower informing which gare the plane is going to use to gare manager...")
-                    await self.send(gare_occupy)
-
-                    # Envia a mensagem de confirmacao para o aviao
-                    jid_plane = str(self.data["id"])
-                    response_plane = Message(to=jid_plane)
-                    response_plane.set_metadata("performative", "landing_authorized")
-                    landing_info = {"runway": runway,
-                                    "gare": gare}
                     
-                    json_data = jsonpickle.encode(landing_info)
-                    response_plane.body = json_data
-                    print(f"Control tower sending landing confirmation to {jid_plane}")
-                    await self.send(response_plane)
+                    if runway or gare:
 
-                    # Retira o aviao da lista de espera de aterragem
-                    for plane in self.agent.landingQueue:
-                        if plane["id"] == self.data:
-                            self.agent.landingQueue.remove(plane)
-                            print(f"Control tower removed plane {self.data} from the landing queue.")
+                        # Altera o estado da pista
+                        self.agent.runways[runway]["status"] = "occupied"
+                        print(f"Runway {runway} occupied ...")
+
+                        # Envia a mensagem de ocupacao da gare para o gestor de gares
+                        gare_occupy = Message(to="gare@" + XMPP_SERVER)
+                        gare_occupy.set_metadata("performative", "request_occupy")
+                        json_data = jsonpickle.encode(gare)
+                        gare_occupy.body = json_data
+                        print(f"Control tower informing which gare the plane is going to use to gare manager...")
+                        await self.send(gare_occupy)
+
+                        # Envia a mensagem de confirmacao para o aviao
+                        jid_plane = str(self.data["id"])
+                        response_plane = Message(to=jid_plane)
+                        response_plane.set_metadata("performative", "agree_landing")
+                        landing_info = {"runway": runway,
+                                        "gare": gare}
+                        
+                        json_data = jsonpickle.encode(landing_info)
+                        response_plane.body = json_data
+                        print(f"Control tower sending landing confirmation to {jid_plane}")
+                        await self.send(response_plane)
+
+                        # Retira o aviao da lista de espera de aterragem
+                        for plane in self.agent.landingQueue:
+                            if plane["id"] == self.data:
+                                self.agent.landingQueue.remove(plane)
+                                print(f"Control tower removed plane {self.data} from the landing queue.")
 
 
-                    # Atualiza a informação do avião e adiciona à lista de aviões que estão aterrar
-                    self.data["runway"] = runway
-                    self.data["gare"] = gare
-                    self.agent.planesLanding.append(self.data)
+                        # Atualiza a informação do avião e adiciona à lista de aviões que estão aterrar
+                        self.data["runway"] = runway
+                        self.data["gare"] = gare
+                        self.agent.planesLanding.append(self.data)
 
                 # Nao existem pistas livres
                 else:
@@ -117,7 +117,7 @@ class TowerLandingBehav(OneShotBehaviour):
 
                         # Envia a mensagem ao aviao a dizer que nao ha pistas disponiveis e tera que aguardar
                         response = Message(to=str(self.data["id"]))
-                        response.set_metadata("performative", "landing_not_authorized")
+                        response.set_metadata("performative", "failure_landing")
                         response.body = "Landing not authorized. No runway available. Added to the landing queue."
                         await self.send(response)
 
@@ -125,7 +125,7 @@ class TowerLandingBehav(OneShotBehaviour):
 
                         # Comunica ao aviao a impossibilidade de aterrar
                         response = Message(to=str(self.data["id"]))
-                        response.set_metadata("performative", "full_landing_queue")
+                        response.set_metadata("performative", "refuse")
                         response.body = "Landing not authorized. Landing queue is full. Find another airport."
                         await self.send(response)
 

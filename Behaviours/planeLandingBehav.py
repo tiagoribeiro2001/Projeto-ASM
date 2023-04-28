@@ -27,7 +27,7 @@ class PlaneLandingBehav(OneShotBehaviour):
 
         # Envia mensagem à torre de controlo para desocupar a pista
         response = Message(to="tower@" + XMPP_SERVER)
-        response.set_metadata("performative", "free_runway")
+        response.set_metadata("performative", "request_free")
         json_data = jsonpickle.encode(self.agent.runway)
         response.body = json_data
         await self.send(response)
@@ -42,7 +42,7 @@ class PlaneLandingBehav(OneShotBehaviour):
         self.agent.state = "parked"
 
 
-        # Envia mensagem à torre de controlo para desocupar a pista
+        # Envia mensagem à torre de controlo para retirar aviao da lista de avioes a aterrar
         json_data = jsonpickle.encode(str(self.agent.jid))
 
         response = Message(to="tower@" + XMPP_SERVER)
@@ -54,6 +54,3 @@ class PlaneLandingBehav(OneShotBehaviour):
         await asyncio.sleep(10)
         a = TakeoffRequestBehav()
         self.agent.add_behaviour(a)
-
-
-

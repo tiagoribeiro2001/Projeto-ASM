@@ -16,7 +16,7 @@ class towerListenBehav(CyclicBehaviour):
         
 
         # Recebe pedido de aviao a querer aterrar
-        if toDo == "landing_request":
+        if toDo == "request_landing":
             print(f"Control Tower received: {toDo}")
 
             # processa a mensagem e verifica se há espaço disponível para aterrar
@@ -28,7 +28,7 @@ class towerListenBehav(CyclicBehaviour):
             self.agent.add_behaviour(a)
 
         # Recebe pedido de aviao a querer levantar voo
-        elif toDo == "takeoff_request":
+        elif toDo == "request_takeoff":
             print(f"Control Tower received: {toDo}")
             
             # Processa a mensagem e verifica se ha espaço disponivel para levantar voo
@@ -40,7 +40,7 @@ class towerListenBehav(CyclicBehaviour):
             self.agent.add_behaviour(a)
 
         # Recebe pedido de aviao para esvaziar a pista
-        elif toDo == "free_runway":
+        elif toDo == "request_free":
             print(f"Control Tower received: {toDo}")
 
             # Processa a mensagem e verifica se ha espaço disponivel para levantar voo
@@ -59,7 +59,7 @@ class towerListenBehav(CyclicBehaviour):
             json_data = msg.body
             id = jsonpickle.decode(json_data)
 
-            a = TowerTakeoffBehav(id)
+            a = TowerTimeoutBehav(id)
             self.agent.add_behaviour(a)
 
         # Recebe pedido para dar display das informações
@@ -71,6 +71,7 @@ class towerListenBehav(CyclicBehaviour):
             a = TowerGiveInformationBehav()
             self.agent.add_behaviour(a)   
 
+        # Remover aviao da lista de avioes a aterrar
         elif toDo == "free_plane_landing":
             print(f"Control Tower received: {toDo}")
             print("Update the list of planes landing...")
@@ -83,7 +84,7 @@ class towerListenBehav(CyclicBehaviour):
                     self.agent.planesLanding.remove(plane)
                     print(f"Control tower removed plane {msg.sender} from the planes landing list.")
             
-
+        # Remover aviao da lista de avioes a descolar
         elif toDo == "free_plane_takeoff":
             print(f"Control Tower received: {toDo}")
             print("Update the list of planes taking off...")

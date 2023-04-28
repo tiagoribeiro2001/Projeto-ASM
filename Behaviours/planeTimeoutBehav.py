@@ -15,4 +15,4 @@ class PlaneTimeoutBehav(OneShotBehaviour):
         await self.send(msg)
         print(f"Plane {str(self.agent.jid)} reached their max wait time. Leaving the airport.")
 
-        self.agent.stop()
+        await self.agent.stop()

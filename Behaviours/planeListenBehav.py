@@ -11,7 +11,7 @@ class PlaneListenBehav(CyclicBehaviour):
         toDo = msg.get_metadata("performative")
         
         # Aterragem autorizada 
-        if toDo == "landing_authorized":
+        if toDo == "agree_landing":
             print(f"Plane received: {toDo}")
             json_data = msg.body
             mensagem = jsonpickle.decode(json_data)
@@ -20,7 +20,7 @@ class PlaneListenBehav(CyclicBehaviour):
             self.agent.add_behaviour(a)
 
         # Aterragem nao autorizada
-        elif toDo == "landing_not_authorized":
+        elif toDo == "failure_landing":
             print(f"Plane received: {toDo}")
 
             message = await self.receive(timeout=self.agent.waitTime)
@@ -29,9 +29,8 @@ class PlaneListenBehav(CyclicBehaviour):
                 a = PlaneTimeoutBehav()
                 self.agent.add_behaviour(a)
 
-    
         # Descolagem autorizada
-        elif toDo == "takeoff_authorized":
+        elif toDo == "agree_takeoff":
             print(f"Plane received: {toDo}")
             json_data = msg.body
             mensagem = jsonpickle.decode(json_data)
@@ -40,11 +39,11 @@ class PlaneListenBehav(CyclicBehaviour):
             self.agent.add_behaviour(a)
 
         # Descolagem nao autorizada
-        elif toDo == "takeoff_not_authorized":
+        elif toDo == "failure_takeoff":
             print(f"Plane received: {toDo}")
 
         # Aterragem nao autorizada e fila de espera cheia
-        elif toDo == "full_landing_queue":
+        elif toDo == "refuse":
             print(f"Plane received: {toDo}. Finding another airport.")
             self.agent.stop()
             

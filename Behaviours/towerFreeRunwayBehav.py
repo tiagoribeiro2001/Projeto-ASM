@@ -60,7 +60,7 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
 
             # Verifica se existe alguma gare para o tipo de avião que está a iterar
             available_gares = Message(to="gare@" + XMPP_SERVER)
-            available_gares.set_metadata("performative", "available_gares")
+            available_gares.set_metadata("performative", "request")
             json_data = jsonpickle.encode(plane["type"])
             available_gares.body = json_data
             await self.send(available_gares)
@@ -69,7 +69,7 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
             toDo = gare_response.get_metadata("performative")
             print(f"Control tower received from gare manager: {toDo}")
 
-            if toDo == "available_gares_response":
+            if toDo == "inform":
 
                 gare_list = jsonpickle.decode(gare_response.body)
 
@@ -80,12 +80,41 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
 
                     if runway or gare:
 
-                        plane_msg = Message(to=str(plane["id"]))
-                        plane_msg.set_metadata("performative", "landing_authorized")
+                        # Altera o estado da pista
+                        self.agent.runways[runway]["status"] = "occupied"
+                        print(f"Runway {runway} occupied ...")
+
+                        # Envia a mensagem de ocupacao da gare para o gestor de gares
+                        gare_occupy = Message(to="gare@" + XMPP_SERVER)
+                        gare_occupy.set_metadata("performative", "request_occupy")
+                        json_data = jsonpickle.encode(gare)
+                        gare_occupy.body = json_data
+                        print(f"Control tower informing which gare the plane is going to use to gare manager...")
+                        await self.send(gare_occupy)
+
+                        # Envia a mensagem de confirmacao para o aviao
+                        jid_plane = str(self.data["id"])
+                        response_plane = Message(to=jid_plane)
+                        response_plane.set_metadata("performative", "agree_landing")
                         landing_info = {"runway": runway,
-                                    "gare": gare}
-                        plane_msg.body = jsonpickle.encode(landing_info)
-                        await self.send(plane_msg)
+                                        "gare": gare}
+                        
+                        json_data = jsonpickle.encode(landing_info)
+                        response_plane.body = json_data
+                        print(f"Control tower sending landing confirmation to {jid_plane}")
+                        await self.send(response_plane)
+
+                        # Retira o aviao da lista de espera de aterragem
+                        for plane in self.agent.landingQueue:
+                            if plane["id"] == self.data:
+                                self.agent.landingQueue.remove(plane)
+                                print(f"Control tower removed plane {self.data} from the landing queue.")
+
+
+                        # Atualiza a informação do avião e adiciona à lista de aviões que estão aterrar
+                        self.data["runway"] = runway
+                        self.data["gare"] = gare
+                        self.agent.planesLanding.append(self.data)
         
         # Percorre a lista de espera de descolagens
         for plane in self.agent.takeoffQueue:
@@ -93,9 +122,36 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
             runway = closest_runway(self.agent.runways, plane["gare"])
 
             if runway:
+
+                # Envia mensagem ao gestor de gares para obter informacoes da gare atual do aviao
+                gare_location_request = Message(to="gare@" + XMPP_SERVER)
+                gare_location_request.set_metadata("performative", "request_location")
+                gare_location_request.body = json_data
+                await self.send(gare_location_request)
                 
-                plane_msg = Message(to=str(plane["id"]))
-                plane_msg.set_metadata("performative", "takeoff_authorized")
-                takeoff_info = {"runway": runway}
-                plane_msg.body = jsonpickle.encode(takeoff_info)
-                await self.send(plane_msg)
+                gare_response = await self.receive(timeout=1000)
+                toDo = gare_response.get_metadata("performative")
+                print(f"Control tower received from gare manager: {toDo}")
+
+                if toDo == "inform_location":
+                    # Altera o estado da pista
+                    self.agent.runways[runway]["status"] = "occupied"
+                    print(f"Runway {runway} occupied ...")
+                    
+                    # Envia a mensagem de confirmacao de descolagem ao aviao
+                    data = {"runway": runway}
+                    json_data = jsonpickle.encode(data)
+                    response_plane = Message(to=str(plane["id"]))
+                    response_plane.set_metadata("performative", "agree_takeoff")
+                    response_plane.body = json_data
+                    await self.send(response_plane)
+
+                    # Remove aviao da lista de espera de descolagens
+                    for plane in self.agent.takeoffQueue:
+                        if plane["id"] == self.data:
+                            self.agent.takeoffQueue.remove(plane)
+                            print(f"Control tower removed plane {self.data} from the takeoff queue.")
+
+                    # Adiciona à lista de aviões que estão a levantar
+                    self.data["runway"] = runway
+                    self.agent.planesTakeoff.append(self.data)

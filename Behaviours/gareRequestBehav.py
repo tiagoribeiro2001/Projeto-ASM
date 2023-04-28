@@ -24,12 +24,11 @@ class GareRequestBehav(OneShotBehaviour):
             free_gares = available_gares(self.agent.gares, self.data["type"])
 
             # Codifica o dicionario de gares disponiveis
-            list_gares = free_gares
-            json_data = jsonpickle.encode(list_gares)
+            json_data = jsonpickle.encode(free_gares)
             
             # Manda as gares disponiveis para a torre de controlo
             response_list = Message(to="tower@" + XMPP_SERVER)
-            response_list.set_metadata("performative", "list_gares")
+            response_list.set_metadata("performative", "inform")
             response_list.body = json_data
             print(f"Gare manager sending control tower the free gares...")
             await self.send(response_list)
@@ -39,7 +38,7 @@ class GareRequestBehav(OneShotBehaviour):
             toDo = gare_occupy.get_metadata("performative")
             print(f"Gare manager received: {toDo}")
 
-            if toDo == "gare_occupy":
+            if toDo == "request_occupy":
 
                 json_data = gare_occupy.body
                 gare = jsonpickle.decode(json_data)

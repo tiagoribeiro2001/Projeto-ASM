@@ -24,7 +24,7 @@ class TakeoffRequestBehav(OneShotBehaviour):
 
         # cria a mensagem com as informações do voo
         msg = Message(to="tower@" + XMPP_SERVER)  # destinatário é a torre de controle
-        msg.set_metadata("performative", "takeoff_request")
+        msg.set_metadata("performative", "request_takeoff")
         msg.body = json_data
         print(f"Plane {str(self.agent.jid)} requesting to takeoff")
         

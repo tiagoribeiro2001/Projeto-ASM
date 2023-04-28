@@ -27,7 +27,7 @@ class PlaneTakeoffBehav(OneShotBehaviour):
 
         # Envia mensagem à torre de controlo para desocupar a pista
         response = Message(to="tower@" + XMPP_SERVER)
-        response.set_metadata("performative", "free_runway")
+        response.set_metadata("performative", "request_free")
         json_data = jsonpickle.encode(self.agent.runway)
         response.body = json_data
         await self.send(response)

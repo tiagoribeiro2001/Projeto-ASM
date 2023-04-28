@@ -1,5 +1,5 @@
 from spade.agent import Agent
-from Behaviours.managerListenBehav import ManagerListenBehaviour
+from Behaviours.managerRequestBehav import ManagerRequestBehav
 
 class ManagerAgent(Agent):
     
@@ -21,5 +21,5 @@ class ManagerAgent(Agent):
         self.max_fila_descolagem = 10
         '''
 
-        a = ManagerListenBehaviour(period=5.0)
+        a = ManagerRequestBehav(period=10.0)
         self.add_behaviour(a)   
