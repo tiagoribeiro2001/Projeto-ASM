@@ -9,7 +9,7 @@ class PlaneTimeoutBehav(OneShotBehaviour):
 
         # Envia mensagem a torre a dizer que quer sair da lista de espera e vai para outro aeroporto
         msg = Message(to="tower@" + XMPP_SERVER)
-        msg.set_metadata("performative", "time_out")
+        msg.set_metadata("performative", "cancel")
         info = self.agent.jid
         msg.body = jsonpickle.encode(info)
         await self.send(msg)

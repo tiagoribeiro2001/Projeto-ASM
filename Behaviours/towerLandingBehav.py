@@ -135,7 +135,7 @@ class TowerLandingBehav(OneShotBehaviour):
 
                 # Envia a mensagem de negacao
                 response = Message(to=str(self.data["id"]))
-                response.set_metadata("performative", "landing_not_authorized")
+                response.set_metadata("performative", "refuse")
                 response.body = "Landing not authorized. No parking available."
                 print("Control tower received that there are no free gares.")
                 await self.send(response)

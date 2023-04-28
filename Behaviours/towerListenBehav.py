@@ -52,7 +52,7 @@ class towerListenBehav(CyclicBehaviour):
             self.agent.add_behaviour(a)
         
         # Recebe pedido de aviao a dizer esperou o tempo maximo na fila de espera
-        elif toDo == "time_out":
+        elif toDo == "cancel":
             print(f"Control Tower received: {toDo}")
 
             print(f"Time out request received from {msg.sender}.")
@@ -72,7 +72,7 @@ class towerListenBehav(CyclicBehaviour):
             self.agent.add_behaviour(a)   
 
         # Remover aviao da lista de avioes a aterrar
-        elif toDo == "free_plane_landing":
+        elif toDo == "inform_landing":
             print(f"Control Tower received: {toDo}")
             print("Update the list of planes landing...")
             json_data = msg.body
@@ -85,7 +85,7 @@ class towerListenBehav(CyclicBehaviour):
                     print(f"Control tower removed plane {msg.sender} from the planes landing list.")
             
         # Remover aviao da lista de avioes a descolar
-        elif toDo == "free_plane_takeoff":
+        elif toDo == "inform_takeoff":
             print(f"Control Tower received: {toDo}")
             print("Update the list of planes taking off...")
             json_data = msg.body

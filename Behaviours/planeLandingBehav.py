@@ -46,7 +46,7 @@ class PlaneLandingBehav(OneShotBehaviour):
         json_data = jsonpickle.encode(str(self.agent.jid))
 
         response = Message(to="tower@" + XMPP_SERVER)
-        response.set_metadata("performative", "free_plane_landing")
+        response.set_metadata("performative", "inform_landing")
         response.body = json_data
         await self.send(response)
 
