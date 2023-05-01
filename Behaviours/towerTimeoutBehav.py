@@ -10,6 +10,6 @@ class TowerTimeoutBehav(OneShotBehaviour):
     async def run(self):
 
         for plane in self.agent.landingQueue:
-            if plane["id"] == self.data:
+            if str(plane["id"]) == str(self.data):
                 self.agent.landingQueue.remove(plane)
                 print(f"Control tower removed plane {self.data} from the landing queue.")

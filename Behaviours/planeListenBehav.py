@@ -25,7 +25,7 @@ class PlaneListenBehav(CyclicBehaviour):
 
             message = await self.receive(timeout=self.agent.waitTime)
 
-            if message == None:
+            if message is None:
                 a = PlaneTimeoutBehav()
                 self.agent.add_behaviour(a)
 

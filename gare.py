@@ -5,8 +5,8 @@ class GareAgent(Agent):
 
     async def setup(self):
         self.gares = {
-                "g1":  {"location": (0   , 300), "type": "commercial", "status": "free"},
-                "g2":  {"location": (50  , 300), "type": "cargo"     , "status": "free"},
+                "g1":  {"location": (0   , 300), "type": "commercial", "status": "occupied"},
+                "g2":  {"location": (50  , 300), "type": "cargo"     , "status": "occupied"},
                 "g3":  {"location": (100 , 300), "type": "commercial", "status": "free"},
                 "g4":  {"location": (150 , 300), "type": "cargo"     , "status": "free"},
                 "g5":  {"location": (200 , 300), "type": "commercial", "status": "free"},

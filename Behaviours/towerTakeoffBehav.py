@@ -76,12 +76,6 @@ class TowerTakeoffBehav(OneShotBehaviour):
                     response_plane.body = json_data
                     await self.send(response_plane)
 
-                    # Remove aviao da lista de espera de descolagens
-                    for plane in self.agent.takeoffQueue:
-                        if plane["id"] == self.data:
-                            self.agent.takeoffQueue.remove(plane)
-                            print(f"Control tower removed plane {self.data} from the takeoff queue.")
-
                     # Adiciona à lista de aviões que estão a levantar
                     self.data["runway"] = runway
                     self.agent.planesTakeoff.append(self.data)

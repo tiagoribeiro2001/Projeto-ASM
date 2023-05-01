@@ -61,7 +61,7 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
             # Verifica se existe alguma gare para o tipo de avião que está a iterar
             available_gares = Message(to="gare@" + XMPP_SERVER)
             available_gares.set_metadata("performative", "request")
-            json_data = jsonpickle.encode(plane["type"])
+            json_data = jsonpickle.encode(plane)
             available_gares.body = json_data
             await self.send(available_gares)
 
@@ -93,28 +93,27 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
                         await self.send(gare_occupy)
 
                         # Envia a mensagem de confirmacao para o aviao
-                        jid_plane = str(self.data["id"])
+                        jid_plane = str(plane["id"])
                         response_plane = Message(to=jid_plane)
                         response_plane.set_metadata("performative", "agree_landing")
                         landing_info = {"runway": runway,
                                         "gare": gare}
-                        
                         json_data = jsonpickle.encode(landing_info)
                         response_plane.body = json_data
                         print(f"Control tower sending landing confirmation to {jid_plane}")
                         await self.send(response_plane)
 
                         # Retira o aviao da lista de espera de aterragem
-                        for plane in self.agent.landingQueue:
-                            if plane["id"] == self.data:
-                                self.agent.landingQueue.remove(plane)
-                                print(f"Control tower removed plane {self.data} from the landing queue.")
+                        for airplane in self.agent.landingQueue:
+                            if airplane["id"] == plane["id"]:
+                                self.agent.landingQueue.remove(airplane)
+                                print(f"Control tower removed plane {jid_plane} from the landing queue.")
 
 
                         # Atualiza a informação do avião e adiciona à lista de aviões que estão aterrar
-                        self.data["runway"] = runway
-                        self.data["gare"] = gare
-                        self.agent.planesLanding.append(self.data)
+                        plane["runway"] = runway
+                        plane["gare"] = gare
+                        self.agent.planesLanding.append(plane)
         
         # Percorre a lista de espera de descolagens
         for plane in self.agent.takeoffQueue:
@@ -126,7 +125,7 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
                 # Envia mensagem ao gestor de gares para obter informacoes da gare atual do aviao
                 gare_location_request = Message(to="gare@" + XMPP_SERVER)
                 gare_location_request.set_metadata("performative", "request_location")
-                gare_location_request.body = json_data
+                gare_location_request.body = jsonpickle.encode(plane)
                 await self.send(gare_location_request)
                 
                 gare_response = await self.receive(timeout=1000)
@@ -141,17 +140,18 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
                     # Envia a mensagem de confirmacao de descolagem ao aviao
                     data = {"runway": runway}
                     json_data = jsonpickle.encode(data)
-                    response_plane = Message(to=str(plane["id"]))
+                    plane_jid = str(plane["id"])
+                    response_plane = Message(to=plane_jid)
                     response_plane.set_metadata("performative", "agree_takeoff")
                     response_plane.body = json_data
                     await self.send(response_plane)
 
                     # Remove aviao da lista de espera de descolagens
-                    for plane in self.agent.takeoffQueue:
-                        if plane["id"] == self.data:
-                            self.agent.takeoffQueue.remove(plane)
-                            print(f"Control tower removed plane {self.data} from the takeoff queue.")
+                    for airplane in self.agent.takeoffQueue:
+                        if airplane["id"] == plane["id"]:
+                            self.agent.takeoffQueue.remove(airplane)
+                            print(f"Control tower removed plane {plane_jid} from the takeoff queue.")
 
                     # Adiciona à lista de aviões que estão a levantar
-                    self.data["runway"] = runway
-                    self.agent.planesTakeoff.append(self.data)
+                    plane["runway"] = runway
+                    self.agent.planesTakeoff.append(plane)

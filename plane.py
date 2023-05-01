@@ -6,16 +6,19 @@ import random
 
 class PlaneAgent(Agent):
 
+    def __init__(self, start_gare, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.start_gare = start_gare
+
     async def setup(self):
-        state = ["air", "ground", "parked"]
+
         companies = ["RyanAir", "EasyJet", "TAP", "Emirates", "Qatar Airways", "Turkish Airlines", "Etihad Airways"]
         types = ["cargo", "commercial"]
-        origins = ["Porto", "Lisboa", "Madrid", "Barcelona", "Paris", "Marselha"]
-        destinies = list(origins)
+        places = ["Porto", "Lisboa", "Madrid", "Barcelona", "Paris", "Marselha"]
 
-        self.state = random.choice(state)
+        self.company = random.choice(companies)
+        self.type = random.choice(types)
         self.runway = None
-        self.gare = None
 
         # Tempo que demora a aterrar e que fica no aeroporto (podemos meter random)
         self.waitTime = 15
@@ -23,19 +26,29 @@ class PlaneAgent(Agent):
         self.runwayTime = 5
         self.moveTime = 5   
 
-        self.company = random.choice(companies)
-        self.type = random.choice(types)
-        self.origin = random.choice(origins)
-        destinies.remove(self.origin)  # remove a origem da lista de destinos
-        self.destiny = random.choice(destinies)
+        if self.start_gare:
+            self.state = "parked"
+            self.origin = "Braga"
+            self.destiny = random.choice(places)
+            self.gare = self.start_gare
+
+        else:
+            self.state = "air"
+            self.origin = random.choice(places)
+            self.destiny = "Braga"
+            self.gare = None
 
         print("Plane Agent {}".format(str(self.jid)) + " starting...")
 
         a = PlaneListenBehav()
         self.add_behaviour(a)
 
-        b = LandingRequestBehav()
-        self.add_behaviour(b)
+        if self.start_gare:
 
-        # c = TakeoffRequestBehav()
-        # self.add_behaviour(c)
+            b = TakeoffRequestBehav()
+            self.add_behaviour(b)
+
+        else:
+
+            c = LandingRequestBehav()
+            self.add_behaviour(c)
