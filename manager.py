@@ -1,5 +1,6 @@
 from spade.agent import Agent
 from Behaviours.managerRequestBehav import ManagerRequestBehav
+import asyncio
 
 class ManagerAgent(Agent):
     
@@ -20,6 +21,5 @@ class ManagerAgent(Agent):
         self.max_fila_aterragem = 10
         self.max_fila_descolagem = 10
         '''
-
         a = ManagerRequestBehav(period=10.0)
         self.add_behaviour(a)   

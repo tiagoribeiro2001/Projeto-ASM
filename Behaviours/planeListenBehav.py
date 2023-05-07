@@ -12,7 +12,7 @@ class PlaneListenBehav(CyclicBehaviour):
         
         # Aterragem autorizada 
         if toDo == "agree_landing":
-            print(f"Plane received: {toDo}")
+            print(f"Plane {self.agent.jid} received: {toDo}")
             json_data = msg.body
             mensagem = jsonpickle.decode(json_data)
 

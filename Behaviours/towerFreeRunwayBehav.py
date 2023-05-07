@@ -98,6 +98,7 @@ class TowerFreeRunwayBehav(OneShotBehaviour):
                         response_plane.set_metadata("performative", "agree_landing")
                         landing_info = {"runway": runway,
                                         "gare": gare}
+
                         json_data = jsonpickle.encode(landing_info)
                         response_plane.body = json_data
                         print(f"Control tower sending landing confirmation to {jid_plane}")

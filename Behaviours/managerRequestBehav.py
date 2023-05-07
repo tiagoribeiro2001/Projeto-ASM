@@ -2,6 +2,9 @@ from spade.behaviour import PeriodicBehaviour
 from spade.message import Message
 from dados import XMPP_SERVER
 import jsonpickle
+import pandas as pd
+from prettytable import PrettyTable
+
 
 class ManagerRequestBehav(PeriodicBehaviour):
 
@@ -30,9 +33,24 @@ class ManagerRequestBehav(PeriodicBehaviour):
         
 
     def display_info(self):
-        print("------------------ Airport Information ------------------")
-        print("Landing queue: ", self.agent.landingQueue)
-        print("Takeoff queue: ", self.agent.takeoffQueue)
-        print("Planes landing: ", self.agent.planesLanding)
-        print("Planes taking off: ", self.agent.planesTakeoff)
-        print("---------------------------------------------------------")
+
+        table = PrettyTable()
+        table.field_names = ["ID", "Company", "Type", "Origin", "Destiny", "Gare", "Runway", "State"]
+
+        # Lista de espera para aterrar
+        for plane in self.agent.landingQueue:
+            table.add_row([plane["id"], plane["company"], plane["type"], plane["origin"], plane["destiny"], plane["gare"], plane["runway"], "In landing queue"])
+
+        # Aterragem em progresso
+        for plane in self.agent.planesLanding:
+            table.add_row([plane["id"], plane["company"], plane["type"], plane["origin"], plane["destiny"], plane["gare"], plane["runway"], "Landing"])
+
+        # Lista de espera para descolar
+        for plane in self.agent.takeoffQueue:
+            table.add_row([plane["id"], plane["company"], plane["type"], plane["origin"], plane["destiny"], plane["gare"], plane["runway"], "In takeoff queue"])
+
+        # Descolagem em progresso
+        for plane in self.agent.planesTakeoff:
+            table.add_row([plane["id"], plane["company"], plane["type"], plane["origin"], plane["destiny"], plane["gare"], plane["runway"], "Taking off"])
+
+        print(table)

@@ -76,13 +76,13 @@ class towerListenBehav(CyclicBehaviour):
             print(f"Control Tower received: {toDo}")
             print("Update the list of planes landing...")
             json_data = msg.body
-            plane = jsonpickle.decode(json_data)
+            plane_jid = jsonpickle.decode(json_data)
 
             # Remove aviao da lista das aterragens
             for plane in self.agent.planesLanding:
-                if plane["id"] == str(msg.sender):
+                if plane["id"] == plane_jid:
                     self.agent.planesLanding.remove(plane)
-                    print(f"Control tower removed plane {msg.sender} from the planes landing list.")
+                    print(f"Control tower removed plane {plane_jid} from the planes landing list.")
             
         # Remover aviao da lista de avioes a descolar
         elif toDo == "inform_takeoff":
