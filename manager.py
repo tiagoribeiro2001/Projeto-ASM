@@ -1,6 +1,5 @@
 from spade.agent import Agent
 from Behaviours.managerRequestBehav import ManagerRequestBehav
-import asyncio
 
 class ManagerAgent(Agent):
     

@@ -2,7 +2,6 @@ from plane import PlaneAgent
 from tower import TowerAgent
 from gare import GareAgent
 from manager import ManagerAgent
-from Behaviours.landingRequestBehav import LandingRequestBehav
 import time
 from dados import XMPP_SERVER, PASSWORD
 

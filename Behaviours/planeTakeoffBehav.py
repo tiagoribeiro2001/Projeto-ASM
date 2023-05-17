@@ -17,12 +17,12 @@ class PlaneTakeoffBehav(OneShotBehaviour):
         self.agent.state = "ground"
 
         # Aviao a ir da gare para a pista
-        print(f"Plane {str(self.agent.jid)} going from gare {str(self.agent.gare)} to runway {str(self.agent.runway)}.")
+        # print(f"Plane {str(self.agent.jid)} going from gare {str(self.agent.gare)} to runway {str(self.agent.runway)}.")
         self.agent.gare = None
         await asyncio.sleep(self.agent.moveTime)
 
         # Espera o tempo que fica na pista
-        print(f"Plane {str(self.agent.jid)} is taking off in runway {str(self.agent.runway)}")
+        # print(f"Plane {str(self.agent.jid)} is taking off in runway {str(self.agent.runway)}")
         await asyncio.sleep(self.agent.runwayTime)
 
         # Envia mensagem à torre de controlo para desocupar a pista
@@ -31,12 +31,12 @@ class PlaneTakeoffBehav(OneShotBehaviour):
         json_data = jsonpickle.encode(self.agent.runway)
         response.body = json_data
         await self.send(response)
-        print(f"Plane {str(self.agent.jid)} took off. Indicating control tower that the runway {str(self.agent.runway)} is free...")
+        # print(f"Plane {str(self.agent.jid)} took off. Indicating control tower that the runway {str(self.agent.runway)} is free...")
         
         self.agent.state = "air"
 
         await self.agent.stop()
-        print(f"Plane {str(self.agent.jid)} has left the airport.")
+        # print(f"Plane {str(self.agent.jid)} has left the airport.")
 
         # Envia mensagem à torre de controlo para desocupar a pista
         json_data = jsonpickle.encode(str(self.agent.jid))

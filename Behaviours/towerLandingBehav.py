@@ -46,13 +46,13 @@ class TowerLandingBehav(OneShotBehaviour):
         request_gare = Message(to="gare@" + XMPP_SERVER)
         request_gare.set_metadata("performative", "request")
         request_gare.body = json_data
-        print(f"Control tower contacting gare manager to check if there are any available gares...")
+        # print(f"Control tower contacting gare manager to check if there are any available gares...")
         await self.send(request_gare)
 
         # Recebe a resposta do gestor de gares
         response_list = await self.receive(timeout=1000)
         toDo = response_list.get_metadata("performative")
-        print(f"Control tower received from gare manager: {toDo}")
+        # print(f"Control tower received from gare manager: {toDo}")
 
         # Recebe a lista de gares do gestor de gares
         if toDo == "inform":
@@ -73,14 +73,14 @@ class TowerLandingBehav(OneShotBehaviour):
 
                         # Altera o estado da pista
                         self.agent.runways[runway]["status"] = "occupied"
-                        print(f"Runway {runway} occupied ...")
+                        # print(f"Runway {runway} occupied ...")
 
                         # Envia a mensagem de ocupacao da gare para o gestor de gares
                         gare_occupy = Message(to="gare@" + XMPP_SERVER)
                         gare_occupy.set_metadata("performative", "request_occupy")
                         json_data = jsonpickle.encode(gare)
                         gare_occupy.body = json_data
-                        print(f"Control tower informing which gare the plane is going to use to gare manager...")
+                        # print(f"Control tower informing which gare the plane is going to use to gare manager...")
                         await self.send(gare_occupy)
 
                         # Envia a mensagem de confirmacao para o aviao
@@ -92,7 +92,7 @@ class TowerLandingBehav(OneShotBehaviour):
                         
                         json_data = jsonpickle.encode(landing_info)
                         response_plane.body = json_data
-                        print(f"Control tower sending landing confirmation to {jid_plane}")
+                        # print(f"Control tower sending landing confirmation to {jid_plane}")
                         await self.send(response_plane)
 
                         # Atualiza a informação do avião e adiciona à lista de aviões que estão aterrar
@@ -130,5 +130,5 @@ class TowerLandingBehav(OneShotBehaviour):
                 response = Message(to=str(self.data["id"]))
                 response.set_metadata("performative", "refuse")
                 response.body = "Landing not authorized. No parking available."
-                print("Control tower received that there are no free gares.")
+                # print("Control tower received that there are no free gares.")
                 await self.send(response)

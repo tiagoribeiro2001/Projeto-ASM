@@ -4,6 +4,7 @@ from dados import XMPP_SERVER
 from Behaviours.takeoffRequestBehav import TakeoffRequestBehav
 import jsonpickle
 import asyncio
+import random
 
 class PlaneLandingBehav(OneShotBehaviour):
 
@@ -17,11 +18,11 @@ class PlaneLandingBehav(OneShotBehaviour):
         self.agent.gare = self.data["gare"]
 
         # Espera o tempo que demora a aterrar
-        print(f"Plane {str(self.agent.jid)} starting the landing")
+        # print(f"Plane {str(self.agent.jid)} starting the landing")
         await asyncio.sleep(self.agent.landingTime)
         
         # Espera o tempo que fica na pista
-        print(f"Plane {str(self.agent.jid)} has landed in runway {str(self.agent.runway)}")
+        # print(f"Plane {str(self.agent.jid)} has landed in runway {str(self.agent.runway)}")
         self.agent.state = "ground"
         await asyncio.sleep(self.agent.runwayTime)
 
@@ -31,14 +32,14 @@ class PlaneLandingBehav(OneShotBehaviour):
         json_data = jsonpickle.encode(self.agent.runway)
         response.body = json_data
         await self.send(response)
-        print(f"Plane {str(self.agent.jid)} indicating control tower that the runway {str(self.agent.runway)} is free...")
+        # print(f"Plane {str(self.agent.jid)} indicating control tower that the runway {str(self.agent.runway)} is free...")
 
         # Espera o tempo de viagem desde a pista ate a gare
-        print(f"Plane {str(self.agent.jid)} going from runway {str(self.agent.runway)} to gare {str(self.agent.gare)}.")
+        # print(f"Plane {str(self.agent.jid)} going from runway {str(self.agent.runway)} to gare {str(self.agent.gare)}.")
         await asyncio.sleep(self.agent.moveTime)
 
         # Altera o estado do aviao para parkado
-        print(f"Plane {str(self.agent.jid)} reached gare {str(self.agent.gare)}. The plane is now parked.")
+        # print(f"Plane {str(self.agent.jid)} reached gare {str(self.agent.gare)}. The plane is now parked.")
         self.agent.state = "parked"
 
 
@@ -52,5 +53,11 @@ class PlaneLandingBehav(OneShotBehaviour):
 
         # Depois de 10 segundos envia um pedido de descolagem
         await asyncio.sleep(10)
+
+        self.agent.origin = "Braga"
+        places = ["Porto", "Lisboa", "Madrid", "Barcelona", "Paris", "Marselha"]
+        self.agent.destiny = random.choice(places)
+        self.agent.runway = None
+
         a = TakeoffRequestBehav()
         self.agent.add_behaviour(a)

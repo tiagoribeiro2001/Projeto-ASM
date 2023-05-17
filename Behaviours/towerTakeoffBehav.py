@@ -51,13 +51,13 @@ class TowerTakeoffBehav(OneShotBehaviour):
             # Recebe a resposta do gestor de gares com a localizacao da gare
             gare_response = await self.receive(timeout=1000)
             toDo = gare_response.get_metadata("performative")
-            print(f"Control tower received from gare manager: {toDo}")
+            # print(f"Control tower received from gare manager: {toDo}")
 
             if toDo == "inform_location":
                 json_data = gare_response.body
                 gare_loc = jsonpickle.decode(json_data)
                 plane_jid = str(self.data["id"])
-                print(f"Control tower has the location where {plane_jid} is located.")
+                # print(f"Control tower has the location where {plane_jid} is located.")
 
                 # Calcula a pista mais proxima da gare do aviao
                 runway = closest_runway(self.agent.runways, gare_loc)
@@ -66,7 +66,7 @@ class TowerTakeoffBehav(OneShotBehaviour):
 
                     # Altera o estado da pista
                     self.agent.runways[runway]["status"] = "occupied"
-                    print(f"Runway {runway} occupied ...")
+                    # print(f"Runway {runway} occupied ...")
                     
                     # Envia a mensagem de confirmacao de descolagem ao aviao
                     data = {"runway": runway}
@@ -86,6 +86,6 @@ class TowerTakeoffBehav(OneShotBehaviour):
 
             # Envia a mensagem de negacao
             response = Message(to=str(self.data["id"]))
-            response_plane.set_metadata("performative", "failure_takeoff")
+            response.set_metadata("performative", "failure_takeoff")
             response.body = "Takeoff not authorized. No runway available. Added to the takeoff queue."
             await self.send(response)
