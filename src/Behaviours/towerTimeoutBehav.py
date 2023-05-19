@@ -6,7 +6,7 @@ class TowerTimeoutBehav(OneShotBehaviour):
         super().__init__(**kwargs)
         self.data = data
 
-    # Receber id e dropar aviao da landing queue
+    # Receber id e retira aviao da landing queue
     async def run(self):
 
         for plane in self.agent.landingQueue:

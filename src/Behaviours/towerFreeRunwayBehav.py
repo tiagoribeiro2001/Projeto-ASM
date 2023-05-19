@@ -4,7 +4,7 @@ from dados import XMPP_SERVER
 import jsonpickle
 import math
 
-#distance between two points
+# Distancia entre dois pontos
 def distance(p1, p2):
     x1, y1 = p1
     x2, y2 = p2
@@ -32,6 +32,7 @@ def shortest_path(runways, gares):
                     min_dist = dist
     return (best_runway, best_gare)
 
+# Descobre qual a pista disponivel mais perto da gare
 def closest_runway(runways, gare):
     best_runway = None
     min_dist = 1000

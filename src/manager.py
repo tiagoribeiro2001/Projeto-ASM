@@ -11,14 +11,5 @@ class ManagerAgent(Agent):
         self.planesLanding = []
         self.planesTakeoff = []
 
-        #avioes = []
-        #pistas = []
-        '''self.avioes = {}
-        self.pistas = {}
-        self.aterragem_queue = []
-        self.descolagem_queue = []
-        self.max_fila_aterragem = 10
-        self.max_fila_descolagem = 10
-        '''
         a = ManagerRequestBehav(period=10.0)
         self.add_behaviour(a)   

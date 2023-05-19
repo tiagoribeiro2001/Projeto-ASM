@@ -20,7 +20,7 @@ class PlaneAgent(Agent):
         self.type = random.choice(types)
         self.runway = None
 
-        # Tempo que demora a aterrar e que fica no aeroporto (podemos meter random)
+        # Tempo que demora a aterrar e que fica no aeroporto (podia ser random)
         self.waitTime = 15
         self.landingTime = 5
         self.runwayTime = 5

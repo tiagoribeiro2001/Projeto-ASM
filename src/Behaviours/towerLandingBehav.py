@@ -4,7 +4,7 @@ from dados import XMPP_SERVER
 import jsonpickle
 import math
 
-#distance between two points
+# Distancia entre dois pontos
 def distance(p1, p2):
     x1, y1 = p1
     x2, y2 = p2

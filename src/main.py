@@ -48,25 +48,3 @@ if __name__ == "__main__":
         count += 1;
         
         time.sleep(10)
-
-    '''
-    future = manager.start()
-    future.wait()
-
-    future = taxi.start()
-    future.wait()
-
-    future = customer.start()
-    future.wait()
-
-    while customer.is_alive():
-        try:
-            time.sleep(1)
-        except KeyboardInterrupt:
-            manager.stop()
-            taxi.stop()
-            customer.stop()
-            break
-    
-    '''
-    print("Agents finished")
